@@ -16,7 +16,7 @@ class PromoRepository:
     # METODI BUONI
     def get_buoni_by_cliente(self, cliente_id: str) -> list[dict]:
         df = self.buoni_repo.read()
-        mask = (df["id_acquirente"].astype(str) == str(cliente_id)) | (df["id_beneficiario"].astype(str) == str(cliente_id))
+        mask = (df["id_acquirente"].astype(str) == cliente_id) | (df["id_beneficiario"].astype(str) == cliente_id)
         return df[mask].to_dict("records")
 
     def get_buono(self, codice: str) -> Optional[dict]:
@@ -48,7 +48,7 @@ class PromoRepository:
     # METODI TRANSAZIONI PUNTI
     def get_transazioni(self, cliente_id: str) -> list[dict]:
         df = self.transazioni_repo.read()
-        mask = df["id_cliente"].astype(str) == str(cliente_id)
+        mask = df["id_cliente"].astype(str) == cliente_id
         return df[mask].to_dict("records")
 
     def create_transazione(self, data: dict) -> dict:

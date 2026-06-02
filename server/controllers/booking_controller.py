@@ -13,8 +13,8 @@ class BookingController:
         """
         Crea la prenotazione e tenta l'assegnazione automatica del tavolo.
         """
-        data = dati.get("data")
-        ora = dati.get("ora")
+        data = str(dati.get("data", ""))
+        ora = str(dati.get("ora", ""))
         numero_persone = int(dati.get("numero_persone", 1))
         
         # Tentativo di auto-assegnazione del tavolo
@@ -66,4 +66,4 @@ class BookingController:
         return self.table_repo.get_all()
         
     def aggiorna_stato_tavolo(self, numero_tavolo: str, nuovo_stato: str) -> bool:
-        return self.table_repo.create_or_update({"numero": numero_tavolo, "stato": nuovo_stato})
+        return self.table_repo.update_stato(numero_tavolo, nuovo_stato)

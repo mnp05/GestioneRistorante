@@ -14,7 +14,7 @@ class InventoryRepository(CSVRepository):
 
     def get_by_id(self, item_id: str) -> Optional[dict]:
         df = self.read()
-        mask = df["id"].astype(str) == str(item_id)
+        mask = df["id"].astype(str) == item_id
         if mask.any():
             return df[mask].iloc[0].to_dict()
         return None
@@ -29,7 +29,7 @@ class InventoryRepository(CSVRepository):
 
     def update(self, item_id: str, data: dict) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == str(item_id)
+        mask = df["id"].astype(str) == item_id
         if not mask.any():
             return False
         idx = df[mask].index[0]
@@ -41,7 +41,7 @@ class InventoryRepository(CSVRepository):
 
     def delete(self, item_id: str) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == str(item_id)
+        mask = df["id"].astype(str) == item_id
         if not mask.any():
             return False
         df = df[~mask]

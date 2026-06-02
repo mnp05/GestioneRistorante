@@ -15,7 +15,7 @@ class UserRepository(CSVRepository):
 
     def get_by_id(self, user_id: str) -> Optional[dict]:
         df = self.read()
-        mask = df["id"].astype(str) == str(user_id)
+        mask = df["id"].astype(str) == user_id
         matches = df[mask]
         if matches.empty:
             return None
@@ -52,7 +52,7 @@ class UserRepository(CSVRepository):
 
     def update(self, user_id: str, update_data: dict) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == str(user_id)
+        mask = df["id"].astype(str) == user_id
         if not mask.any():
             return False
             
@@ -66,7 +66,7 @@ class UserRepository(CSVRepository):
 
     def delete(self, user_id: str) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == str(user_id)
+        mask = df["id"].astype(str) == user_id
         if not mask.any():
             return False
             

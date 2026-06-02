@@ -14,7 +14,7 @@ class DashboardRepository(CSVRepository):
 
     def get_by_id(self, msg_id: str) -> Optional[dict]:
         df = self.read()
-        mask = df["id"].astype(str) == str(msg_id)
+        mask = df["id"].astype(str) == msg_id
         if mask.any():
             return df[mask].iloc[0].to_dict()
         return None
@@ -29,7 +29,7 @@ class DashboardRepository(CSVRepository):
 
     def update(self, msg_id: str, data: dict) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == str(msg_id)
+        mask = df["id"].astype(str) == msg_id
         if not mask.any():
             return False
         idx = df[mask].index[0]
@@ -41,7 +41,7 @@ class DashboardRepository(CSVRepository):
 
     def delete(self, msg_id: str) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == str(msg_id)
+        mask = df["id"].astype(str) == msg_id
         if not mask.any():
             return False
         df = df[~mask]

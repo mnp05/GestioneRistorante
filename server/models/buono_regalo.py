@@ -14,4 +14,9 @@ class BuonoRegalo:
         return self.stato == "ATTIVO" and data_odierna <= self.data_scadenza
 
     def riscatta(self, id_beneficiario: str) -> bool:
-        pass
+        if self.stato == "ATTIVO":
+            self.stato = "RISCATTATO"
+            # Assegna o verifica il beneficiario a seconda delle regole di business
+            self.id_beneficiario = id_beneficiario
+            return True
+        return False

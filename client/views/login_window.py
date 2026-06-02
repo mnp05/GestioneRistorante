@@ -48,7 +48,7 @@ class LoginWindow(QWidget):
         pass_layout = QHBoxLayout()
         pass_label = QLabel("Password:")
         self.pass_input = QLineEdit()
-        self.pass_input.setEchoMode(QLineEdit.Password)
+        self.pass_input.setEchoMode(QLineEdit.Password) # type: ignore
         self.pass_input.setStyleSheet("border: 1px dashed black; padding: 5px;")
         pass_layout.addWidget(pass_label)
         pass_layout.addWidget(self.pass_input)

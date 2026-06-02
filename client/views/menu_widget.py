@@ -32,9 +32,9 @@ class MenuWidget(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["Nome Piatto", "Costo", "Allergeni", "Ingredienti"])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.table.setSelectionBehavior(QTableWidget.SelectRows)
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
         layout.addWidget(self.table)
 
         # Pulsante Dettagli

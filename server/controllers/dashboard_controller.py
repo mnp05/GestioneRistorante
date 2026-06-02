@@ -24,7 +24,7 @@ class DashboardController:
 
     def modifica_messaggio(self, msg_id: str, autore_id: str, nuovo_testo: str) -> bool:
         msg = self.dash_repo.get_by_id(msg_id)
-        if not msg or str(msg.get("id_autore")) != str(autore_id):
+        if not msg or str(msg.get("id_autore")) != autore_id:
             raise PermissionError("Puoi modificare solo i tuoi messaggi.")
             
         return self.dash_repo.update(msg_id, {"testo": nuovo_testo})
@@ -35,7 +35,7 @@ class DashboardController:
             return False
             
         # Solo l'autore originale o un Gestore possono eliminare
-        if str(msg.get("id_autore")) == str(utente_richiedente_id) or utente_role == "Gestore":
+        if str(msg.get("id_autore")) == utente_richiedente_id or utente_role == "Gestore":
             return self.dash_repo.delete(msg_id)
         
         raise PermissionError("Non hai i permessi per eliminare questo messaggio.")

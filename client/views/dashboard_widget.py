@@ -77,7 +77,7 @@ class DashboardWidget(QWidget):
 
         buoni_layout.addWidget(lbl_titolo_buoni)
         buoni_layout.addLayout(input_layout)
-        buoni_layout.addWidget(self.btn_riscatta, alignment=Qt.AlignCenter)
+        buoni_layout.addWidget(self.btn_riscatta, alignment=Qt.AlignCenter) # type: ignore
 
         cards_layout.addWidget(card_punti)
         cards_layout.addWidget(card_buoni)
