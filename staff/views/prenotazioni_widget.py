@@ -47,9 +47,9 @@ class PrenotazioniWidget(QWidget):
         self.table.setHorizontalHeaderLabels([
             "ID", "Data", "Ora", "Persone", "Tavolo", "Stato", "Note"
         ])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.table.setSelectionBehavior(QTableWidget.SelectRows)
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
         layout.addWidget(self.table)
 
         btn_layout = QHBoxLayout()
@@ -142,7 +142,7 @@ class PrenotazioniWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Annullamento",
             f"Annullare la prenotazione #{prenotazione.get('id')}?",
-            QMessageBox.Yes | QMessageBox.No
+            QMessageBox.Yes | QMessageBox.No # type: ignore
         )
 
         if risposta == QMessageBox.Yes:

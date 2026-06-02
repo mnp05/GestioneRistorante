@@ -47,3 +47,21 @@ class InventoryRepository(CSVRepository):
         df = df[~mask]
         self.write(df)
         return True
+
+    def get_all_categories(self) -> list[str]:
+        df = self.read()
+        if df.empty or "categoria_id" not in df.columns:
+            return []
+        unique_cats = df["categoria_id"].dropna().unique()
+        return sorted([str(c).strip() for c in unique_cats if str(c).strip() and str(c).strip() != "Nessuna"])
+
+    def bulk_remove_category(self, nome_categoria: str) -> bool:
+        df = self.read()
+        if df.empty or "categoria_id" not in df.columns:
+            return False
+        
+        mask = df["categoria_id"].astype(str).str.strip() == nome_categoria.strip()
+        if mask.any():
+            df.loc[mask, "categoria_id"] = ""
+            self.write(df)
+        return True

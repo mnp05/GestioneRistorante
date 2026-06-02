@@ -1,10 +1,15 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMessageBox
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, 
+                             QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, 
+                             QMessageBox, QCheckBox)
+from PyQt5.QtCore import Qt
 from client.api_client import APIClient
 
 class MenuWidget(QWidget):
-    def __init__(self):
+    def __init__(self, user_data):
         super().__init__()
+        self.user_data = user_data
         self.piatti_data = []
+        self.preferiti_ids = []
         self.init_ui()
         self.load_data()
 
@@ -12,17 +17,19 @@ class MenuWidget(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
 
-        # Barra superiore (Categoria e Ricerca)
+        # Barra superiore (Ricerca e Preferiti)
         search_layout = QHBoxLayout()
         
-        lbl_cat = QLabel("Categoria:")
-        # In una versione reale ci sarebbe una QComboBox qui
-        search_layout.addWidget(lbl_cat)
+        self.chk_preferiti = QCheckBox("Mostra solo i miei Preferiti")
+        self.chk_preferiti.setStyleSheet("color: #8C1515; font-weight: bold;")
+        self.chk_preferiti.stateChanged.connect(self.load_data)
+        search_layout.addWidget(self.chk_preferiti)
+        
         search_layout.addStretch()
         
         lbl_cerca = QLabel("Cerca piatto:")
         self.input_cerca = QLineEdit()
-        self.input_cerca.setStyleSheet("border: 1px dashed black;")
+        self.input_cerca.setStyleSheet("border: 1px dashed black; padding: 5px;")
         search_layout.addWidget(lbl_cerca)
         search_layout.addWidget(self.input_cerca)
 
@@ -30,9 +37,11 @@ class MenuWidget(QWidget):
 
         # Tabella
         self.table = QTableWidget()
-        self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels(["Nome Piatto", "Costo", "Allergeni", "Ingredienti"])
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels(["Preferito", "Nome Piatto", "Costo", "Allergeni", "Ingredienti"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
+        # Fix column 0 width for the heart button
+        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents) # type: ignore
         self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
         self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
         layout.addWidget(self.table)
@@ -55,15 +64,44 @@ class MenuWidget(QWidget):
 
     def load_data(self):
         try:
-            self.piatti_data = APIClient.get_menu()
+            user_id = self.user_data.get("id")
+            preferiti_data = APIClient.get_preferiti(user_id)
+            self.preferiti_ids = [str(p.get("id")) for p in preferiti_data]
+            
+            if self.chk_preferiti.isChecked():
+                self.piatti_data = preferiti_data
+            else:
+                self.piatti_data = APIClient.get_menu()
+                
             self.table.setRowCount(len(self.piatti_data))
             for row, piatto in enumerate(self.piatti_data):
-                self.table.setItem(row, 0, QTableWidgetItem(piatto.get("nome", "")))
-                self.table.setItem(row, 1, QTableWidgetItem(f"€{piatto.get('prezzo', '')}"))
-                self.table.setItem(row, 2, QTableWidgetItem(piatto.get("allergeni", "")))
-                self.table.setItem(row, 3, QTableWidgetItem(piatto.get("descrizione", "")))
+                piatto_id = str(piatto.get("id"))
+                
+                # Bottone Preferito (Cuore)
+                btn_fav = QPushButton()
+                if piatto_id in self.preferiti_ids:
+                    btn_fav.setText("❤")
+                    btn_fav.setStyleSheet("color: red; font-size: 16px; border: none; background: transparent;")
+                else:
+                    btn_fav.setText("♡")
+                    btn_fav.setStyleSheet("color: gray; font-size: 16px; border: none; background: transparent;")
+                    
+                btn_fav.clicked.connect(lambda checked, pid=piatto_id: self.toggle_fav(pid))
+                self.table.setCellWidget(row, 0, btn_fav)
+                
+                self.table.setItem(row, 1, QTableWidgetItem(piatto.get("nome", "")))
+                self.table.setItem(row, 2, QTableWidgetItem(f"€{piatto.get('prezzo', '')}"))
+                self.table.setItem(row, 3, QTableWidgetItem(piatto.get("allergeni", "")))
+                self.table.setItem(row, 4, QTableWidgetItem(piatto.get("descrizione", "")))
         except Exception as e:
             QMessageBox.warning(self, "Errore", f"Impossibile caricare il menù:\n{e}")
+
+    def toggle_fav(self, piatto_id):
+        try:
+            APIClient.toggle_preferito(self.user_data.get("id"), piatto_id)
+            self.load_data()
+        except Exception as e:
+            QMessageBox.warning(self, "Errore", f"Impossibile aggiornare i preferiti:\n{e}")
 
     def mostra_dettagli(self):
         selected = self.table.currentRow()

@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLab
 from PyQt5.QtCore import Qt
 from client.views.dashboard_widget import DashboardWidget
 from client.views.menu_widget import MenuWidget
+from client.views.prenota_widget import PrenotaWidget
+from client.views.buoni_widget import BuoniWidget
 
 class MainWindow(QMainWindow):
     def __init__(self, user_data, logout_callback):
@@ -71,11 +73,15 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.dashboard_tab, "Dashboard")
 
         # Tab 2: Menù
-        self.menu_tab = MenuWidget()
+        self.menu_tab = MenuWidget(self.user_data)
         self.tabs.addTab(self.menu_tab, "Menù")
 
-        # Tab 3: Prenota (Placeholder per futuri sprint)
-        self.prenota_tab = QWidget()
+        # Tab 3: Prenota
+        self.prenota_tab = PrenotaWidget(self.user_data)
         self.tabs.addTab(self.prenota_tab, "Prenota")
+
+        # Tab 4: Buoni Regalo
+        self.buoni_tab = BuoniWidget(self.user_data)
+        self.tabs.addTab(self.buoni_tab, "Buoni Regalo")
 
         main_layout.addWidget(self.tabs)

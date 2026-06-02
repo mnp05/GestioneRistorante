@@ -6,7 +6,7 @@ class UserRepository(CSVRepository):
     def __init__(self) -> None:
         super().__init__(
             "utenti.csv",
-            ["id", "nome", "cognome", "email", "password", "ruolo", "livello_accesso", "stato_account", "ultimo_accesso", "saldo_punti"],
+            ["id", "nome", "cognome", "email", "password", "ruolo", "livello_accesso", "stato_account", "ultimo_accesso", "saldo_punti", "piatti_preferiti"],
         )
 
     def get_all(self) -> list[dict]:
@@ -38,7 +38,7 @@ class UserRepository(CSVRepository):
     def create(self, user_data: dict) -> dict:
         df = self.read()
         if not df.empty and (df["email"].str.lower() == user_data.get("email", "").lower()).any():
-            raise ValueError("Email già in uso")
+            raise ValueError("Email già registrata. Inserisci una diversa email o effettua il login.")
             
         user_id = self.get_next_id()
         user_data["id"] = user_id

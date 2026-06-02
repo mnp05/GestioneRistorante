@@ -67,3 +67,9 @@ class BookingController:
         
     def aggiorna_stato_tavolo(self, numero_tavolo: str, nuovo_stato: str) -> bool:
         return self.table_repo.update_stato(numero_tavolo, nuovo_stato)
+
+    def salva_tavolo(self, dati: dict) -> dict:
+        return self.table_repo.create_or_update(dati)
+
+    def rimuovi_tavolo(self, numero: str) -> bool:
+        return self.table_repo.delete(numero)

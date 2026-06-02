@@ -22,6 +22,32 @@ class StaffAPIClient:
             return res.json().get("user")
         raise ValueError(res.json().get("message", "Errore creazione dipendente"))
 
+    @classmethod
+    def get_dipendenti(cls):
+        res = requests.get(f"{cls.BASE_URL}/auth/dipendenti")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def aggiorna_livello_dipendente(cls, creatore_id, dipendente_id, nuovo_livello):
+        res = requests.put(f"{cls.BASE_URL}/auth/dipendente/{dipendente_id}", json={
+            "creatore_id": creatore_id,
+            "livello_accesso": nuovo_livello
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore aggiornamento dipendente"))
+
+    @classmethod
+    def elimina_dipendente(cls, creatore_id, dipendente_id):
+        res = requests.delete(f"{cls.BASE_URL}/auth/dipendente/{dipendente_id}", json={
+            "creatore_id": creatore_id
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore eliminazione dipendente"))
+
     # --- TAVOLI ---
 
     @classmethod
@@ -30,6 +56,18 @@ class StaffAPIClient:
         if res.status_code == 200:
             return res.json().get("data", [])
         return []
+
+    @classmethod
+    def salva_tavolo(cls, dati):
+        res = requests.post(f"{cls.BASE_URL}/tables", json=dati)
+        if res.status_code == 200:
+            return res.json().get("data")
+        raise ValueError("Errore salvataggio tavolo")
+
+    @classmethod
+    def elimina_tavolo(cls, numero):
+        res = requests.delete(f"{cls.BASE_URL}/tables/{numero}")
+        return res.status_code == 200
 
     @classmethod
     def aggiorna_stato_tavolo(cls, numero, stato):
@@ -83,6 +121,11 @@ class StaffAPIClient:
         res = requests.delete(f"{cls.BASE_URL}/menu/{piatto_id}")
         return res.status_code == 200
 
+    @classmethod
+    def attiva_piatto(cls, piatto_id):
+        res = requests.put(f"{cls.BASE_URL}/menu/{piatto_id}/activate")
+        return res.status_code == 200
+
     # --- INVENTARIO ---
 
     @classmethod
@@ -91,6 +134,18 @@ class StaffAPIClient:
         if res.status_code == 200:
             return res.json().get("data", [])
         return []
+
+    @classmethod
+    def get_categorie_inventario(cls):
+        res = requests.get(f"{cls.BASE_URL}/inventory/categories")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def elimina_categoria_inventario(cls, nome):
+        res = requests.delete(f"{cls.BASE_URL}/inventory/categories/{nome}")
+        return res.status_code == 200
 
     @classmethod
     def aggiungi_ingrediente(cls, dati):

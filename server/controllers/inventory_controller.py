@@ -36,3 +36,9 @@ class InventoryController:
             return "IN_ESAURIMENTO"
         else:
             return "SUFFICIENTE"
+
+    def get_categorie(self) -> list[str]:
+        return self.inv_repo.get_all_categories()
+
+    def rimuovi_categoria(self, nome_categoria: str) -> bool:
+        return self.inv_repo.bulk_remove_category(nome_categoria)

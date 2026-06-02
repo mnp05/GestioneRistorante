@@ -11,11 +11,39 @@ class APIClient:
         raise ValueError(res.json().get("message", "Errore di login"))
 
     @classmethod
+    def register(cls, nome, cognome, email, password):
+        res = requests.post(f"{cls.BASE_URL}/auth/register", json={
+            "nome": nome,
+            "cognome": cognome,
+            "email": email,
+            "password": password
+        })
+        if res.status_code == 201:
+            return res.json().get("user")
+        raise ValueError(res.json().get("message", "Errore di registrazione"))
+
+    @classmethod
     def get_menu(cls):
         res = requests.get(f"{cls.BASE_URL}/menu")
         if res.status_code == 200:
             return res.json().get("data", [])
         return []
+
+    @classmethod
+    def get_preferiti(cls, cliente_id):
+        res = requests.get(f"{cls.BASE_URL}/menu/preferiti/{cliente_id}")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def toggle_preferito(cls, cliente_id, piatto_id):
+        res = requests.post(f"{cls.BASE_URL}/menu/preferiti/{cliente_id}", json={
+            "piatto_id": piatto_id
+        })
+        if res.status_code == 200:
+            return res.json().get("is_added")
+        raise ValueError("Errore aggiornamento preferiti")
 
     @classmethod
     def get_punti_fedelta(cls, user_id):
@@ -36,3 +64,51 @@ class APIClient:
         if res.status_code == 200:
             return True
         raise ValueError(res.json().get("message", "Errore riscatto buono"))
+
+    @classmethod
+    def get_buoni(cls, user_id):
+        res = requests.get(f"{cls.BASE_URL}/promo/buoni/{user_id}")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def acquista_buono(cls, id_acquirente, valore, data_scadenza):
+        res = requests.post(f"{cls.BASE_URL}/promo/buoni", json={
+            "id_acquirente": id_acquirente,
+            "valore": valore,
+            "data_scadenza": data_scadenza
+        })
+        if res.status_code == 201:
+            return res.json().get("data")
+        raise ValueError(res.json().get("message", "Errore acquisto buono"))
+
+    # --- PRENOTAZIONI ---
+
+    @classmethod
+    def get_prenotazioni_utente(cls, user_id):
+        res = requests.get(f"{cls.BASE_URL}/bookings", params={"clienteId": user_id})
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def effettua_prenotazione(cls, dati):
+        res = requests.post(f"{cls.BASE_URL}/bookings", json=dati)
+        if res.status_code == 201:
+            return res.json().get("data")
+        raise ValueError(res.json().get("message", "Errore durante la prenotazione"))
+
+    @classmethod
+    def cancella_prenotazione(cls, booking_id):
+        res = requests.delete(f"{cls.BASE_URL}/bookings/{booking_id}")
+        if res.status_code == 200:
+            return True
+        return False
+
+    @classmethod
+    def modifica_prenotazione(cls, booking_id, dati):
+        res = requests.put(f"{cls.BASE_URL}/bookings/{booking_id}", json=dati)
+        if res.status_code == 200:
+            return True
+        return False

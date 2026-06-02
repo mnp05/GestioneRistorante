@@ -52,3 +52,26 @@ class AuthController:
     def get_all_dipendenti(self) -> list[dict]:
         utenti = self.user_repo.get_all()
         return [u for u in utenti if u.get("ruolo") in ["Dipendente", "Gestore"]]
+
+    def elimina_dipendente(self, creatore_id: str, dipendente_id: str) -> bool:
+        creatore = self.user_repo.get_by_id(creatore_id)
+        if not creatore or creatore.get("ruolo") != "Gestore":
+            raise PermissionError("Solo il Gestore può eliminare account dipendenti.")
+        
+        # Non permettere l'auto-eliminazione o l'eliminazione di un altro gestore (per sicurezza base)
+        target = self.user_repo.get_by_id(dipendente_id)
+        if not target or target.get("ruolo") == "Gestore":
+            raise ValueError("Impossibile eliminare l'account specificato.")
+            
+        return self.user_repo.delete(dipendente_id)
+
+    def aggiorna_dipendente(self, creatore_id: str, dipendente_id: str, nuovo_livello: str) -> bool:
+        creatore = self.user_repo.get_by_id(creatore_id)
+        if not creatore or creatore.get("ruolo") != "Gestore":
+            raise PermissionError("Solo il Gestore può modificare i livelli di accesso.")
+            
+        target = self.user_repo.get_by_id(dipendente_id)
+        if not target or target.get("ruolo") == "Gestore":
+            raise ValueError("Impossibile modificare l'account specificato.")
+            
+        return self.user_repo.update(dipendente_id, {"livello_accesso": nuovo_livello})

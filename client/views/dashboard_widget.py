@@ -44,40 +44,28 @@ class DashboardWidget(QWidget):
         punti_layout.addStretch()
         punti_layout.addWidget(lbl_prossimo)
 
-        # Card Destra (Buoni)
+        # Card Destra (Info Buoni Regalo)
         card_buoni = QFrame()
-        card_buoni.setStyleSheet("background-color: #FFFFE0; border: 1px solid #E0E0E0;")
+        card_buoni.setStyleSheet("background-color: #FFFFE0; border: 1px solid #E0E0E0; border-radius: 8px;")
         buoni_layout = QVBoxLayout(card_buoni)
         
-        lbl_titolo_buoni = QLabel("RISCATTA BUONO REGALO")
-        lbl_titolo_buoni.setAlignment(Qt.AlignCenter)  # type: ignore
-        lbl_titolo_buoni.setStyleSheet("color: #8C1515; font-weight: bold; border: none;")
+        lbl_titolo_buoni = QLabel("BUONI REGALO")
+        lbl_titolo_buoni.setAlignment(Qt.AlignCenter) # type: ignore
+        lbl_titolo_buoni.setStyleSheet("color: #8C1515; font-weight: bold; border: none; font-size: 16px;")
 
-        input_layout = QVBoxLayout()
-        lbl_codice = QLabel("Codice buono:")
-        lbl_codice.setStyleSheet("border: none;")
-        self.input_codice = QLineEdit()
-        self.input_codice.setPlaceholderText("[GIFT-XXXX-XXXX-XXXX]")
-        self.input_codice.setStyleSheet("background-color: white; border: 1px dashed gray; padding: 5px;")
-        input_layout.addWidget(lbl_codice)
-        input_layout.addWidget(self.input_codice)
+        lbl_info = QLabel("Scopri i nostri Buoni Regalo!\n\nRegala un'esperienza gastronomica unica\no riscatta un codice ricevuto in dono.")
+        lbl_info.setAlignment(Qt.AlignCenter) # type: ignore
+        lbl_info.setStyleSheet("border: none; color: #555; font-size: 14px;")
 
-        self.btn_riscatta = QPushButton("Riscatta")
-        self.btn_riscatta.setStyleSheet("""
-            QPushButton {
-                background-color: #E6D2B5;
-                border-radius: 15px;
-                padding: 10px;
-                font-weight: bold;
-                color: gray;
-            }
-            QPushButton:hover { background-color: #D4C1A3; }
-        """)
-        self.btn_riscatta.clicked.connect(self.handle_riscatta)
+        lbl_cta = QLabel("Vai alla tab 'Buoni Regalo' in alto")
+        lbl_cta.setAlignment(Qt.AlignCenter) # type: ignore
+        lbl_cta.setStyleSheet("font-style: italic; color: #888; border: none;")
 
         buoni_layout.addWidget(lbl_titolo_buoni)
-        buoni_layout.addLayout(input_layout)
-        buoni_layout.addWidget(self.btn_riscatta, alignment=Qt.AlignCenter) # type: ignore
+        buoni_layout.addSpacing(10)
+        buoni_layout.addWidget(lbl_info)
+        buoni_layout.addSpacing(10)
+        buoni_layout.addWidget(lbl_cta)
 
         cards_layout.addWidget(card_punti)
         cards_layout.addWidget(card_buoni)
@@ -92,12 +80,3 @@ class DashboardWidget(QWidget):
 
         layout.addStretch()
         self.setLayout(layout)
-
-    def handle_riscatta(self):
-        codice = self.input_codice.text()
-        try:
-            APIClient.riscatta_buono(codice, self.user_data.get("id"))
-            QMessageBox.information(self, "Successo", "Buono riscattato con successo!")
-            self.input_codice.clear()
-        except Exception as e:
-            QMessageBox.warning(self, "Errore", str(e))

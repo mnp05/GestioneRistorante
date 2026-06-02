@@ -132,7 +132,7 @@ class StaffDashboardWidget(QWidget):
             """)
             msg_id = msg.get("id")
             btn_elimina.clicked.connect(lambda checked, mid=msg_id: self.elimina_messaggio(mid))
-            card_layout.addWidget(btn_elimina, alignment=Qt.AlignRight)
+            card_layout.addWidget(btn_elimina, alignment=Qt.AlignRight)  # type: ignore
 
         return card
 
@@ -153,7 +153,7 @@ class StaffDashboardWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Eliminazione",
             "Eliminare questo messaggio?",
-            QMessageBox.Yes | QMessageBox.No
+            QMessageBox.Yes | QMessageBox.No # type: ignore
         )
 
         if risposta == QMessageBox.Yes:

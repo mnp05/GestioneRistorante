@@ -40,9 +40,9 @@ class StaffMenuWidget(QWidget):
         self.table.setHorizontalHeaderLabels([
             "ID", "Nome", "Prezzo", "Allergeni", "Categoria", "Attivo"
         ])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.table.setSelectionBehavior(QTableWidget.SelectRows)
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
         layout.addWidget(self.table)
 
         btn_layout = QHBoxLayout()
@@ -77,10 +77,21 @@ class StaffMenuWidget(QWidget):
         """)
         btn_disattiva.clicked.connect(self.disattiva_piatto)
 
+        btn_attiva = QPushButton("Riattiva Piatto")
+        btn_attiva.setStyleSheet("""
+            QPushButton {
+                background-color: #2196F3; color: white;
+                border-radius: 10px; padding: 8px 16px; font-weight: bold;
+            }
+            QPushButton:hover { background-color: #42A5F5; }
+        """)
+        btn_attiva.clicked.connect(self.attiva_piatto)
+
         btn_layout.addStretch()
         btn_layout.addWidget(btn_aggiungi)
         btn_layout.addWidget(btn_modifica)
         btn_layout.addWidget(btn_disattiva)
+        btn_layout.addWidget(btn_attiva)
         btn_layout.addStretch()
         layout.addLayout(btn_layout)
 
@@ -123,7 +134,7 @@ class StaffMenuWidget(QWidget):
             campi[campo] = input_field
             form.addRow(label, input_field)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) # type: ignore
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         form.addRow(buttons)
@@ -174,7 +185,7 @@ class StaffMenuWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Disattivazione",
             f"Disattivare il piatto '{piatto.get('nome')}'?",
-            QMessageBox.Yes | QMessageBox.No
+            QMessageBox.Yes | QMessageBox.No # type: ignore
         )
 
         if risposta == QMessageBox.Yes:
@@ -185,5 +196,29 @@ class StaffMenuWidget(QWidget):
                     self.load_data()
                 else:
                     QMessageBox.warning(self, "Errore", "Impossibile disattivare il piatto.")
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
+
+    def attiva_piatto(self):
+        row = self.table.currentRow()
+        if row < 0:
+            QMessageBox.warning(self, "Attenzione", "Seleziona un piatto dalla tabella.")
+            return
+
+        piatto = self.piatti_data[row]
+        risposta = QMessageBox.question(
+            self, "Conferma Riattivazione",
+            f"Riattivare il piatto '{piatto.get('nome')}'?",
+            QMessageBox.Yes | QMessageBox.No # type: ignore
+        )
+
+        if risposta == QMessageBox.Yes:
+            try:
+                success = StaffAPIClient.attiva_piatto(piatto.get("id"))
+                if success:
+                    QMessageBox.information(self, "Successo", "Piatto riattivato con successo.")
+                    self.load_data()
+                else:
+                    QMessageBox.warning(self, "Errore", "Impossibile riattivare il piatto.")
             except Exception as e:
                 QMessageBox.warning(self, "Errore", str(e))

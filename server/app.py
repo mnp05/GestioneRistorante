@@ -55,12 +55,41 @@ def create_dipendente():
     except PermissionError as e:
         return jsonify({"status": "error", "message": str(e)}), 403
 
+@app.route('/api/auth/dipendenti', methods=['GET'])
+def get_dipendenti():
+    return jsonify({"status": "success", "data": auth_ctrl.get_all_dipendenti()}), 200
+
+@app.route('/api/auth/dipendente/<dipendente_id>', methods=['PUT'])
+def update_dipendente(dipendente_id):
+    data = request.json
+    try:
+        success = auth_ctrl.aggiorna_dipendente(data.get("creatore_id"), dipendente_id, data.get("livello_accesso"))
+        if success:
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Dipendente non trovato"}), 404
+    except (PermissionError, ValueError) as e:
+        return jsonify({"status": "error", "message": str(e)}), 403
+
+@app.route('/api/auth/dipendente/<dipendente_id>', methods=['DELETE'])
+def delete_dipendente(dipendente_id):
+    data = request.json or {}
+    try:
+        success = auth_ctrl.elimina_dipendente(data.get("creatore_id"), dipendente_id) # type: ignore
+        if success:
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Dipendente non trovato"}), 404
+    except (PermissionError, ValueError) as e:
+        return jsonify({"status": "error", "message": str(e)}), 403
 
 # --- PRENOTAZIONI E TAVOLI ---
 
 @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
-    return jsonify({"status": "success", "data": booking_ctrl.get_all_bookings()}), 200
+    cliente_id = request.args.get('clienteId')
+    bookings = booking_ctrl.get_all_bookings()
+    if cliente_id:
+        bookings = [b for b in bookings if str(b.get("id_cliente")) == cliente_id]
+    return jsonify({"status": "success", "data": bookings}), 200
 
 @app.route('/api/bookings', methods=['POST'])
 def create_booking():
@@ -74,7 +103,7 @@ def update_booking(booking_id):
     if data.get("stato") == "CONFERMATA" and data.get("id_tavolo"):
         success = booking_ctrl.conferma_prenotazione(booking_id, data.get("id_tavolo"))
     else:
-        success = booking_ctrl.modifica_prenotazione(booking_id, data)
+        success = booking_ctrl.modifica_prenotazione(booking_id, data) # type: ignore
     if success:
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Prenotazione non trovata"}), 404
@@ -97,6 +126,26 @@ def update_table_status(numero):
     if success:
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Tavolo non trovato"}), 404
+
+
+@app.route('/api/tables', methods=['POST'])
+def add_or_update_table():
+    data = request.json
+    try:
+        tavolo = booking_ctrl.salva_tavolo(data)
+        return jsonify({"status": "success", "data": tavolo}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route('/api/tables/<numero>', methods=['DELETE'])
+def delete_table(numero):
+    try:
+        success = booking_ctrl.rimuovi_tavolo(numero)
+        if success:
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Tavolo non trovato"}), 404
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 
 # --- MENU ---
@@ -129,6 +178,33 @@ def delete_menu_item(item_id):
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Piatto non trovato"}), 404
 
+@app.route('/api/menu/<item_id>/activate', methods=['PUT'])
+def activate_menu_item(item_id):
+    success = menu_ctrl.attiva_piatto(item_id)
+    if success:
+        return jsonify({"status": "success"}), 200
+    return jsonify({"status": "error", "message": "Piatto non trovato"}), 404
+
+# --- PREFERITI MENU ---
+
+@app.route('/api/menu/preferiti/<cliente_id>', methods=['GET'])
+def get_preferiti(cliente_id):
+    try:
+        preferiti = menu_ctrl.get_preferiti(cliente_id)
+        return jsonify({"status": "success", "data": preferiti}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route('/api/menu/preferiti/<cliente_id>', methods=['POST'])
+def toggle_preferito(cliente_id):
+    data = request.json
+    piatto_id = data.get("piatto_id")
+    try:
+        is_added = menu_ctrl.toggle_preferito(cliente_id, piatto_id)
+        return jsonify({"status": "success", "is_added": is_added}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
 
 # --- INVENTARIO ---
 
@@ -156,6 +232,18 @@ def delete_inventory_item(item_id):
     if success:
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Ingrediente non trovato"}), 404
+
+
+@app.route('/api/inventory/categories', methods=['GET'])
+def get_inventory_categories():
+    return jsonify({"status": "success", "data": inv_ctrl.get_categorie()}), 200
+
+@app.route('/api/inventory/categories/<nome>', methods=['DELETE'])
+def delete_inventory_category(nome):
+    success = inv_ctrl.rimuovi_categoria(nome)
+    if success:
+        return jsonify({"status": "success"}), 200
+    return jsonify({"status": "error", "message": "Impossibile rimuovere la categoria"}), 400
 
 
 # --- PROMOZIONI ---
@@ -218,7 +306,7 @@ def update_dashboard_message(msg_id):
 def delete_dashboard_message(msg_id):
     data = request.json or {}
     try:
-        success = dash_ctrl.rimuovi_messaggio(msg_id, data.get("utente_id"), data.get("ruolo"))
+        success = dash_ctrl.rimuovi_messaggio(msg_id, data.get("utente_id"), data.get("ruolo")) # type: ignore
         if success:
             return jsonify({"status": "success"}), 200
         return jsonify({"status": "error", "message": "Messaggio non trovato"}), 404
