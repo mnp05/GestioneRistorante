@@ -1,0 +1,133 @@
+import requests
+
+class StaffAPIClient:
+    BASE_URL = "http://127.0.0.1:5000/api"
+
+    # --- AUTH ---
+
+    @classmethod
+    def login(cls, email, password):
+        res = requests.post(f"{cls.BASE_URL}/auth/login", json={"email": email, "password": password})
+        if res.status_code == 200:
+            return res.json().get("user")
+        raise ValueError(res.json().get("message", "Errore di login"))
+
+    @classmethod
+    def crea_dipendente(cls, creatore_id, nome, cognome, email, password, livello_accesso):
+        res = requests.post(f"{cls.BASE_URL}/auth/dipendente", json={
+            "creatore_id": creatore_id, "nome": nome, "cognome": cognome,
+            "email": email, "password": password, "livello_accesso": livello_accesso
+        })
+        if res.status_code == 201:
+            return res.json().get("user")
+        raise ValueError(res.json().get("message", "Errore creazione dipendente"))
+
+    # --- TAVOLI ---
+
+    @classmethod
+    def get_tavoli(cls):
+        res = requests.get(f"{cls.BASE_URL}/tables")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def aggiorna_stato_tavolo(cls, numero, stato):
+        res = requests.put(f"{cls.BASE_URL}/tables/{numero}", json={"stato": stato})
+        return res.status_code == 200
+
+    # --- PRENOTAZIONI ---
+
+    @classmethod
+    def get_prenotazioni(cls):
+        res = requests.get(f"{cls.BASE_URL}/bookings")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def conferma_prenotazione(cls, booking_id, tavolo_id):
+        res = requests.put(f"{cls.BASE_URL}/bookings/{booking_id}", json={
+            "stato": "CONFERMATA", "id_tavolo": tavolo_id
+        })
+        return res.status_code == 200
+
+    @classmethod
+    def annulla_prenotazione(cls, booking_id):
+        res = requests.delete(f"{cls.BASE_URL}/bookings/{booking_id}")
+        return res.status_code == 200
+
+    # --- MENU ---
+
+    @classmethod
+    def get_menu(cls):
+        res = requests.get(f"{cls.BASE_URL}/menu?all=true")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def aggiungi_piatto(cls, dati):
+        res = requests.post(f"{cls.BASE_URL}/menu", json=dati)
+        if res.status_code == 201:
+            return res.json().get("data")
+        raise ValueError("Errore nell'aggiunta del piatto")
+
+    @classmethod
+    def modifica_piatto(cls, piatto_id, dati):
+        res = requests.put(f"{cls.BASE_URL}/menu/{piatto_id}", json=dati)
+        return res.status_code == 200
+
+    @classmethod
+    def elimina_piatto(cls, piatto_id):
+        res = requests.delete(f"{cls.BASE_URL}/menu/{piatto_id}")
+        return res.status_code == 200
+
+    # --- INVENTARIO ---
+
+    @classmethod
+    def get_inventario(cls):
+        res = requests.get(f"{cls.BASE_URL}/inventory")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def aggiungi_ingrediente(cls, dati):
+        res = requests.post(f"{cls.BASE_URL}/inventory", json=dati)
+        if res.status_code == 201:
+            return res.json().get("data")
+        raise ValueError("Errore nell'aggiunta dell'ingrediente")
+
+    @classmethod
+    def aggiorna_scorte(cls, item_id, quantita):
+        res = requests.put(f"{cls.BASE_URL}/inventory/{item_id}", json={"quantita_disponibile": quantita})
+        return res.status_code == 200
+
+    @classmethod
+    def elimina_ingrediente(cls, item_id):
+        res = requests.delete(f"{cls.BASE_URL}/inventory/{item_id}")
+        return res.status_code == 200
+
+    # --- DASHBOARD ---
+
+    @classmethod
+    def get_messaggi(cls):
+        res = requests.get(f"{cls.BASE_URL}/dashboard")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def pubblica_messaggio(cls, autore_id, testo):
+        res = requests.post(f"{cls.BASE_URL}/dashboard", json={"autore_id": autore_id, "testo": testo})
+        if res.status_code == 201:
+            return res.json().get("data")
+        raise ValueError(res.json().get("message", "Errore pubblicazione messaggio"))
+
+    @classmethod
+    def elimina_messaggio(cls, msg_id, utente_id, ruolo):
+        res = requests.delete(f"{cls.BASE_URL}/dashboard/{msg_id}", json={
+            "utente_id": utente_id, "ruolo": ruolo
+        })
+        return res.status_code == 200

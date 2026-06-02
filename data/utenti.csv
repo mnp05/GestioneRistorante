@@ -1,0 +1,5 @@
+id,nome,cognome,email,password,ruolo,livello_accesso,stato_account,ultimo_accesso,saldo_punti
+1,Mario,Rossi,gestore@ristorante.it,gestore123,Gestore,ACCESSO_COMPLETO,ATTIVO,2026-06-02 19:17:44,0
+2,Luigi,Verdi,sala@ristorante.it,sala123,Dipendente,GESTIONE_PRENOTAZIONI,ATTIVO,2026-06-02 19:17:08,0
+3,Anna,Bianchi,cucina@ristorante.it,cucina123,Dipendente,GESTIONE_INVENTARIO,ATTIVO,,0
+4,Giuseppe,Gialli,cliente@email.it,cliente123,Cliente,,ATTIVO,2026-06-02 19:19:08,50

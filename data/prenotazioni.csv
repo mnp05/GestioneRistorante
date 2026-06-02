@@ -1,0 +1,6 @@
+id,id_cliente,nome_ospite,data,ora,numero_persone,allergeni,note,id_tavolo,stato
+1,4,,2026-06-02,20:00,2,Noci,Tavolo appartato,5,CONFERMATA
+2,,Ospite Walk-in,2026-06-02,13:00,4,,,4,IN_CORSO
+3,4,,2026-12-31,21:00,6,,Compleanno,,RICHIESTA
+4,4,,2026-06-02,20:30,5,Nessuno,,6,CONFERMATA
+5,4,,2026-06-02,20:30,5,Nessuno,,7,CONFERMATA

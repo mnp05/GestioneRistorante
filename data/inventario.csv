@@ -1,0 +1,5 @@
+id,nome,descrizione,quantita_disponibile,unita_misura,soglia_minima,categoria_id,stato
+1,Farina 00,Farina per impasti,25.5,Kg,10.0,1,SUFFICIENTE
+2,Guanciale,Guanciale stagionato,10.0,Kg,3.0,2,SUFFICIENTE
+3,Uova,Uova fresche,50.0,Pz,20.0,3,SUFFICIENTE
+4,Pomodori Pelati,Latta da 5kg,15.0,Kg,5.0,4,SUFFICIENTE

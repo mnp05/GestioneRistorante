@@ -1,0 +1,38 @@
+import requests
+
+class APIClient:
+    BASE_URL = "http://127.0.0.1:5000/api"
+
+    @classmethod
+    def login(cls, email, password):
+        res = requests.post(f"{cls.BASE_URL}/auth/login", json={"email": email, "password": password})
+        if res.status_code == 200:
+            return res.json().get("user")
+        raise ValueError(res.json().get("message", "Errore di login"))
+
+    @classmethod
+    def get_menu(cls):
+        res = requests.get(f"{cls.BASE_URL}/menu")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
+    def get_punti_fedelta(cls, user_id):
+        # Cerchiamo lo storico dei punti
+        res = requests.get(f"{cls.BASE_URL}/promo/punti/{user_id}")
+        if res.status_code == 200:
+            # Per semplicità calcoliamo il saldo qui o assumiamo di avere il dato
+            # (Nel backend abbiamo salvato saldo_punti dentro l'oggetto utente, usiamo quello)
+            pass
+        return 0 # Placeholder: usiamo user.get('saldo_punti') nell'interfaccia
+
+    @classmethod
+    def riscatta_buono(cls, codice, user_id):
+        res = requests.post(f"{cls.BASE_URL}/promo/riscatta", json={
+            "codice": codice,
+            "id_beneficiario": user_id
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore riscatto buono"))
