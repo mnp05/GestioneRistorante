@@ -6,7 +6,7 @@ class DashboardRepository(CSVRepository):
     def __init__(self) -> None:
         super().__init__(
             "dashboard.csv",
-            ["id", "id_autore", "testo", "timestamp"],
+            ["id", "utente_id", "testo", "timestamp"],
         )
 
     def get_all(self) -> list[dict]:

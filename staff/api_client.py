@@ -98,7 +98,7 @@ class StaffAPIClient:
     @classmethod
     def conferma_prenotazione(cls, booking_id, tavolo_id):
         res = requests.put(f"{cls.BASE_URL}/bookings/{booking_id}", json={
-            "stato": "CONFERMATA", "id_tavolo": tavolo_id
+            "stato": "CONFERMATA", "tavolo_id": tavolo_id
         })
         return res.status_code == 200
 
@@ -111,7 +111,7 @@ class StaffAPIClient:
     def auto_conferma_prenotazione(cls, booking_id):
         res = requests.post(f"{cls.BASE_URL}/bookings/{booking_id}/auto_confirm")
         if res.status_code == 200:
-            return True, res.json().get("id_tavolo")
+            return True, res.json().get("tavolo_id")
         return False, res.json().get("error_code")
 
     @classmethod

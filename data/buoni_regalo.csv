@@ -1,4 +1,4 @@
-codice_univoco,valore,stato,id_acquirente,id_beneficiario,data_scadenza
+codice_univoco,valore,stato,acquirente_id,beneficiario_id,data_scadenza
 BUONO50,50.0,RISCATTATO,4,4,2026-07-02
 REGALO20,20.0,RISCATTATO,4,4,2026-07-02
 SCADUTO10,10.0,SCADUTO,4,,2026-05-28

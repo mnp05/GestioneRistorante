@@ -32,11 +32,11 @@ class TavoloDialog(QDialog):
         
         self.inp_x = QSpinBox()
         self.inp_x.setRange(0, 20)
-        self.inp_x.setValue(int(self.tavolo_data.get("coord_x", 0)))
+        self.inp_x.setValue(int(self.tavolo_data.get("coordinata_x", 0)))
         
         self.inp_y = QSpinBox()
         self.inp_y.setRange(0, 20)
-        self.inp_y.setValue(int(self.tavolo_data.get("coord_y", 0)))
+        self.inp_y.setValue(int(self.tavolo_data.get("coordinata_y", 0)))
         
         self.combo_stato = QComboBox()
         self.combo_stato.addItems(list(COLORI_STATO.keys()))
@@ -81,8 +81,8 @@ class TavoloDialog(QDialog):
         return {
             "numero": self.inp_numero.text().strip(),
             "capienza": self.inp_capienza.value(),
-            "coord_x": self.inp_x.value(),
-            "coord_y": self.inp_y.value(),
+            "coordinata_x": self.inp_x.value(),
+            "coordinata_y": self.inp_y.value(),
             "stato": self.combo_stato.currentText()
         }
 
@@ -160,8 +160,8 @@ class TavoliWidget(QWidget):
     def check_sovrapposizione(self, x: int, y: int, numero_escluso: Optional[str] = None) -> bool:
         for t in self.tavoli_data:
             if str(t.get("numero")) != str(numero_escluso):
-                tx = int(t.get("coord_x", 0))
-                ty = int(t.get("coord_y", 0))
+                tx = int(t.get("coordinata_x", 0))
+                ty = int(t.get("coordinata_y", 0))
                 if tx == x and ty == y:
                     return True
         return False
@@ -182,13 +182,13 @@ class TavoliWidget(QWidget):
             QMessageBox.warning(self, "Errore", f"Impossibile caricare i tavoli:\n{e}")
             return
 
-        max_x = max([int(t.get("coord_x", 0)) for t in self.tavoli_data] + [3])
-        max_y = max([int(t.get("coord_y", 0)) for t in self.tavoli_data] + [3])
+        max_x = max([int(t.get("coordinata_x", 0)) for t in self.tavoli_data] + [3])
+        max_y = max([int(t.get("coordinata_y", 0)) for t in self.tavoli_data] + [3])
 
         mappa_tavoli = {}
         for t in self.tavoli_data:
-            tx = int(t.get("coord_x", 0))
-            ty = int(t.get("coord_y", 0))
+            tx = int(t.get("coordinata_x", 0))
+            ty = int(t.get("coordinata_y", 0))
             mappa_tavoli[(tx, ty)] = t
 
         for y in range(max_y + 1):
@@ -237,7 +237,7 @@ class TavoliWidget(QWidget):
             if not dati["numero"]:
                 QMessageBox.warning(self, "Errore", "Il numero del tavolo è obbligatorio.")
                 return
-            if self.check_sovrapposizione(dati["coord_x"], dati["coord_y"]):
+            if self.check_sovrapposizione(dati["coordinata_x"], dati["coordinata_y"]):
                 QMessageBox.warning(self, "Errore", "La posizione (X, Y) è già occupata da un altro tavolo.")
                 return
             try:
@@ -263,7 +263,7 @@ class TavoliWidget(QWidget):
             else:
                 dati = dialog.get_data()
                 dati["data"] = target_date
-                if self.check_sovrapposizione(dati["coord_x"], dati["coord_y"], dati["numero"]):
+                if self.check_sovrapposizione(dati["coordinata_x"], dati["coordinata_y"], dati["numero"]):
                     QMessageBox.warning(self, "Errore", "La posizione (X, Y) è già occupata da un altro tavolo.")
                     return
                 try:

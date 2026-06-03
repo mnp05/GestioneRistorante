@@ -96,7 +96,7 @@ class BuoniWidget(QWidget):
                 
                 # Calcola il ruolo: Acquirente o Beneficiario
                 ruolo = "Acquistato da te"
-                if str(b.get("id_beneficiario", "")) == str(self.user_data.get("id")):
+                if str(b.get("beneficiario_id", "")) == str(self.user_data.get("id")):
                     ruolo = "Riscattato da te"
                 self.table.setItem(row, 3, QTableWidgetItem(ruolo))
 

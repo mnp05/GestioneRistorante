@@ -6,17 +6,17 @@ class PromoRepository:
     def __init__(self) -> None:
         self.buoni_repo = CSVRepository(
             "buoni_regalo.csv",
-            ["codice_univoco", "valore", "stato", "id_acquirente", "id_beneficiario", "data_scadenza"]
+            ["codice_univoco", "valore", "stato", "acquirente_id", "beneficiario_id", "data_scadenza"]
         )
         self.transazioni_repo = CSVRepository(
             "transazioni.csv",
-            ["id", "id_cliente", "punti", "descrizione", "data"]
+            ["id", "cliente_id", "punti", "descrizione", "data"]
         )
 
     # METODI BUONI
     def get_buoni_by_cliente(self, cliente_id: str) -> list[dict]:
         df = self.buoni_repo.read()
-        mask = (df["id_acquirente"].astype(str) == cliente_id) | (df["id_beneficiario"].astype(str) == cliente_id)
+        mask = (df["acquirente_id"].astype(str) == cliente_id) | (df["beneficiario_id"].astype(str) == cliente_id)
         return df[mask].to_dict("records")
 
     def get_buono(self, codice: str) -> Optional[dict]:
@@ -48,7 +48,7 @@ class PromoRepository:
     # METODI TRANSAZIONI PUNTI
     def get_transazioni(self, cliente_id: str) -> list[dict]:
         df = self.transazioni_repo.read()
-        mask = df["id_cliente"].astype(str) == cliente_id
+        mask = df["cliente_id"].astype(str) == cliente_id
         return df[mask].to_dict("records")
 
     def create_transazione(self, data: dict) -> dict:

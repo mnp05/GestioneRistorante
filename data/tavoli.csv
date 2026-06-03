@@ -1,4 +1,4 @@
-numero,capienza,coord_x,coord_y,stato,data
+numero,capienza,coordinata_x,coordinata_y,stato,data
 1,2,0,0,DISPONIBILE,DEFAULT
 3,4,0,1,DISPONIBILE,DEFAULT
 4,4,2,1,DISPONIBILE,DEFAULT
@@ -9,3 +9,8 @@ numero,capienza,coord_x,coord_y,stato,data
 4,4,2,1,DISPONIBILE,2026-06-09
 2,2,1,0,DISPONIBILE,2026-06-09
 5,2,4,2,DISPONIBILE,2026-06-09
+1,2,0,0,DISPONIBILE,2026-06-03
+3,4,0,1,DISPONIBILE,2026-06-03
+4,4,2,1,DISPONIBILE,2026-06-03
+2,5,1,0,PRENOTATO,2026-06-03
+5,2,0,2,DISPONIBILE,2026-06-03

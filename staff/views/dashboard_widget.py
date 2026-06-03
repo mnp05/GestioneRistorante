@@ -139,7 +139,7 @@ class StaffDashboardWidget(QWidget):
         lbl_testo.setWordWrap(True)
         lbl_testo.setStyleSheet("border: none; padding: 5px 0; color: #333; font-size: 13px;")
 
-        is_proprio = str(msg.get("id_autore")) == str(self.user_data.get("id"))
+        is_proprio = str(msg.get("utente_id")) == str(self.user_data.get("id"))
         is_gestore = self.user_data.get("ruolo") == "Gestore"
 
         card_layout.addLayout(header_layout)

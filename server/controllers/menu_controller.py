@@ -1,38 +1,39 @@
 from server.repositories.menu_repository import MenuRepository
 from server.repositories.user_repository import UserRepository
 
+
 class MenuController:
     def __init__(self):
         self.menu_repo = MenuRepository()
         self.user_repo = UserRepository()
 
-    def get_menu_attivo(self) -> list[dict]:
+    def get_filtered_menu(self) -> list[dict]:
         tutti = self.menu_repo.get_all()
         # Restituisce solo i prodotti con attivo=True
         return [p for p in tutti if str(p.get("attivo", "")).lower() in ("true", "1", "t")]
 
-    def get_tutto_il_menu(self) -> list[dict]:
+    def get_all_menu(self) -> list[dict]:
         return self.menu_repo.get_all()
 
-    def aggiungi_piatto(self, dati: dict) -> dict:
+    def add_product(self, dati: dict) -> dict:
         dati["attivo"] = True
         return self.menu_repo.create(dati)
 
-    def modifica_piatto(self, piatto_id: str, nuovi_dati: dict) -> bool:
+    def edit_product(self, piatto_id: str, nuovi_dati: dict) -> bool:
         return self.menu_repo.update(piatto_id, nuovi_dati)
 
-    def disattiva_piatto(self, piatto_id: str) -> bool:
+    def deactivate_product(self, piatto_id: str) -> bool:
         return self.menu_repo.update(piatto_id, {"attivo": False})
 
-    def attiva_piatto(self, piatto_id: str) -> bool:
+    def activate_product(self, piatto_id: str) -> bool:
         return self.menu_repo.update(piatto_id, {"attivo": True})
 
-    def rimuovi_piatto_definitivamente(self, piatto_id: str) -> bool:
+    def delete_product(self, piatto_id: str) -> bool:
         return self.menu_repo.delete(piatto_id)
 
     # --- PREFERITI ---
     
-    def toggle_preferito(self, cliente_id: str, piatto_id: str) -> bool:
+    def toggle_favorite(self, cliente_id: str, piatto_id: str) -> bool:
         user = self.user_repo.get_by_id(cliente_id)
         if not user:
             raise ValueError("Utente non trovato")
@@ -52,7 +53,7 @@ class MenuController:
         self.user_repo.update(cliente_id, {"piatti_preferiti": new_str})
         return is_added
 
-    def get_preferiti(self, cliente_id: str) -> list[dict]:
+    def get_favorites(self, cliente_id: str) -> list[dict]:
         user = self.user_repo.get_by_id(cliente_id)
         if not user:
             return []
@@ -63,5 +64,5 @@ class MenuController:
         if not preferiti_ids:
             return []
             
-        tutti_i_piatti = self.get_menu_attivo()
+        tutti_i_piatti = self.get_filtered_menu()
         return [p for p in tutti_i_piatti if str(p.get("id")) in preferiti_ids]

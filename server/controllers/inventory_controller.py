@@ -1,10 +1,11 @@
 from server.repositories.inventory_repository import InventoryRepository
 
+
 class InventoryController:
     def __init__(self):
         self.inv_repo = InventoryRepository()
 
-    def get_inventario(self) -> list[dict]:
+    def get_inventory(self) -> list[dict]:
         return self.inv_repo.get_all()
 
     def _to_float(self, val, default=0.0) -> float:
@@ -15,13 +16,13 @@ class InventoryController:
         except (ValueError, TypeError):
             return float(default)
 
-    def aggiungi_ingrediente(self, dati: dict) -> dict:
+    def add_stock_item(self, dati: dict) -> dict:
         quantita = self._to_float(dati.get("quantita_disponibile", 0))
         soglia = self._to_float(dati.get("soglia_minima", 0))
         dati["stato"] = self._calcola_stato(quantita, soglia)
         return self.inv_repo.create(dati)
 
-    def aggiorna_scorte(self, ingrediente_id: str, nuova_quantita: float) -> bool:
+    def update_stock_quantity(self, ingrediente_id: str, nuova_quantita: float) -> bool:
         ingrediente = self.inv_repo.get_by_id(ingrediente_id)
         if not ingrediente:
             return False
@@ -34,7 +35,7 @@ class InventoryController:
             "stato": nuovo_stato
         })
 
-    def modifica_ingrediente(self, ingrediente_id: str, nuovi_dati: dict) -> bool:
+    def edit_stock_item(self, ingrediente_id: str, nuovi_dati: dict) -> bool:
         ingrediente = self.inv_repo.get_by_id(ingrediente_id)
         if not ingrediente:
             return False
@@ -48,7 +49,7 @@ class InventoryController:
         
         return self.inv_repo.update(ingrediente_id, nuovi_dati)
 
-    def rimuovi_ingrediente(self, ingrediente_id: str) -> bool:
+    def remove_stock_item(self, ingrediente_id: str) -> bool:
         return self.inv_repo.delete(ingrediente_id)
 
     def _calcola_stato(self, quantita: float, soglia: float) -> str:
@@ -59,8 +60,8 @@ class InventoryController:
         else:
             return "SUFFICIENTE"
 
-    def get_categorie(self) -> list[str]:
+    def get_categories(self) -> list[str]:
         return self.inv_repo.get_all_categories()
 
-    def rimuovi_categoria(self, nome_categoria: str) -> bool:
+    def remove_category(self, nome_categoria: str) -> bool:
         return self.inv_repo.bulk_remove_category(nome_categoria)

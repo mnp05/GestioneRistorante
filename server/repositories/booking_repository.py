@@ -6,7 +6,7 @@ class BookingRepository(CSVRepository):
     def __init__(self) -> None:
         super().__init__(
             "prenotazioni.csv",
-            ["id", "id_cliente", "nome_ospite", "data", "ora", "numero_persone", "allergeni", "note", "id_tavolo", "stato"],
+            ["id", "cliente_id", "nome_ospite", "data", "ora", "numero_persone", "allergeni", "note", "tavolo_id", "stato"],
         )
 
     def get_all(self) -> list[dict]:

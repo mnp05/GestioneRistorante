@@ -3,13 +3,14 @@ from server.repositories.booking_repository import BookingRepository
 from server.repositories.table_repository import TableRepository
 from server.repositories.user_repository import UserRepository
 
+
 class BookingController:
     def __init__(self):
         self.booking_repo = BookingRepository()
         self.table_repo = TableRepository()
         self.user_repo = UserRepository()
 
-    def get_all_bookings(self, data_filtro: Optional[str] = None) -> list[dict]:
+    def handle_get_all_bookings(self, data_filtro: Optional[str] = None) -> list[dict]:
         tutte = self.booking_repo.get_all()
         if data_filtro:
             tutte = [p for p in tutte if str(p.get("data")) == data_filtro]
@@ -17,27 +18,27 @@ class BookingController:
         for b in tutte:
             if b.get("nome_ospite"):
                 b["nome_cliente"] = b["nome_ospite"]
-            elif b.get("id_cliente"):
-                user = self.user_repo.get_by_id(str(b["id_cliente"]))
+            elif b.get("cliente_id"):
+                user = self.user_repo.get_by_id(str(b["cliente_id"]))
                 if user:
                     b["nome_cliente"] = f"{user.get('nome', '')} {user.get('cognome', '')}".strip()
                 else:
-                    b["nome_cliente"] = f"Utente ID {b['id_cliente']}"
+                    b["nome_cliente"] = f"Utente ID {b['cliente_id']}"
             else:
                 b["nome_cliente"] = "Sconosciuto"
                 
         return tutte
 
-    def effettua_prenotazione(self, dati: dict) -> dict:
+    def handle_new_booking(self, dati: dict) -> dict:
         """
         Crea la prenotazione in stato RICHIESTA. L'assegnazione automatica avverrà 
         solo alla conferma da parte del dipendente.
         """
-        dati["id_tavolo"] = ""
+        dati["tavolo_id"] = ""
         dati["stato"] = "RICHIESTA"
         return self.booking_repo.create(dati)
 
-    def auto_assegnazione_tavolo(self, data: str, ora: str, coperti: int) -> str:
+    def handle_auto_assignment(self, data: str, ora: str, coperti: int) -> str:
         """
         Trova il primo tavolo libero in quella data/ora con capienza sufficiente.
         Ottimizza cercando la capienza minima necessaria.
@@ -51,7 +52,6 @@ class BookingController:
         tavoli_idonei.sort(key=lambda t: int(t.get("capienza", 0)))
         
         # Trova tavoli già occupati in quella data e fascia oraria approssimativa
-        # (Per semplicità in questa fase assumiamo che 'ora' identifichi il turno intero)
         prenotazioni_conflitto = [
             p for p in tutte_le_prenotazioni 
             if p.get("data") == data and p.get("ora") == ora and p.get("stato") not in ["ANNULLATA", "DISDETTA"]
@@ -60,7 +60,7 @@ class BookingController:
             s = str(val).strip()
             return s[:-2] if s.endswith('.0') else s
 
-        tavoli_occupati = [_clean(p.get("id_tavolo")) for p in prenotazioni_conflitto if p.get("id_tavolo")]
+        tavoli_occupati = [_clean(p.get("tavolo_id")) for p in prenotazioni_conflitto if p.get("tavolo_id")]
         
         for tavolo in tavoli_idonei:
             if _clean(tavolo["numero"]) not in tavoli_occupati:
@@ -68,13 +68,13 @@ class BookingController:
         
         return "" # Nessun tavolo disponibile
 
-    def conferma_prenotazione(self, booking_id: str, tavolo_id: str) -> bool:
-        return self.booking_repo.update(booking_id, {"stato": "CONFERMATA", "id_tavolo": tavolo_id})
+    def handle_confirm_booking(self, booking_id: str, tavolo_id: str) -> bool:
+        return self.booking_repo.update(booking_id, {"stato": "CONFERMATA", "tavolo_id": tavolo_id})
 
-    def modifica_prenotazione(self, booking_id: str, data: dict) -> bool:
+    def handle_edit_booking(self, booking_id: str, data: dict) -> bool:
         return self.booking_repo.update(booking_id, data)
 
-    def tenta_auto_conferma(self, booking_id: str) -> Optional[str]:
+    def handle_try_auto_confirm(self, booking_id: str) -> Optional[str]:
         """Tenta l'assegnazione automatica. Restituisce l'ID del tavolo se OK, None se overbooking."""
         prenotazione = self.booking_repo.get_by_id(booking_id)
         if not prenotazione:
@@ -87,27 +87,27 @@ class BookingController:
         except ValueError:
             numero_persone = 1
             
-        tavolo_id = self.auto_assegnazione_tavolo(data, ora, numero_persone)
+        tavolo_id = self.handle_auto_assignment(data, ora, numero_persone)
         if tavolo_id:
-            self.conferma_prenotazione(booking_id, tavolo_id)
+            self.handle_confirm_booking(booking_id, tavolo_id)
             return tavolo_id
         return None
 
-    def annulla_prenotazione(self, booking_id: str) -> bool:
-        return self.booking_repo.update(booking_id, {"stato": "DISDETTA", "id_tavolo": ""})
+    def handle_cancel_booking(self, booking_id: str) -> bool:
+        return self.booking_repo.update(booking_id, {"stato": "DISDETTA", "tavolo_id": ""})
         
-    def get_tavoli(self, data_filtro: Optional[str] = None) -> list[dict]:
+    def handle_get_tables(self, data_filtro: Optional[str] = None) -> list[dict]:
         target_date = data_filtro if data_filtro else "DEFAULT"
         tavoli = self.table_repo.get_for_date(target_date)
         
         if data_filtro:
-            prenotazioni_del_giorno = self.get_all_bookings(data_filtro)
+            prenotazioni_del_giorno = self.handle_get_all_bookings(data_filtro)
             
             def _clean(val):
                 s = str(val).strip()
                 return s[:-2] if s.endswith('.0') else s
                 
-            tavoli_prenotati = [_clean(p.get("id_tavolo")) for p in prenotazioni_del_giorno if p.get("stato") in ["CONFERMATA", "RICHIESTA"] and p.get("id_tavolo")]
+            tavoli_prenotati = [_clean(p.get("tavolo_id")) for p in prenotazioni_del_giorno if p.get("stato") in ["CONFERMATA", "RICHIESTA"] and p.get("tavolo_id")]
             
             for t in tavoli:
                 if _clean(t.get("numero")) in tavoli_prenotati:
@@ -115,11 +115,11 @@ class BookingController:
                     
         return tavoli
         
-    def aggiorna_stato_tavolo(self, numero_tavolo: str, nuovo_stato: str, target_date: str = "DEFAULT") -> bool:
+    def handle_table_status_update(self, numero_tavolo: str, nuovo_stato: str, target_date: str = "DEFAULT") -> bool:
         return self.table_repo.update_stato(numero_tavolo, nuovo_stato, target_date)
 
-    def salva_tavolo(self, dati: dict) -> dict:
+    def handle_table_layout_update(self, dati: dict) -> dict:
         return self.table_repo.create_or_update(dati)
 
-    def rimuovi_tavolo(self, numero: str, target_date: str = "DEFAULT") -> bool:
+    def handle_remove_table(self, numero: str, target_date: str = "DEFAULT") -> bool:
         return self.table_repo.delete(numero, target_date)

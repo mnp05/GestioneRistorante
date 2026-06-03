@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
+from server.models.enums import LivelloAccesso
 
 @dataclass
 class Utente:
@@ -51,7 +52,7 @@ class Dipendente(Utente):
         return self.livello_accesso
 
     def has_permesso(self, azione: str) -> bool:
-        if self.livello_accesso == "ACCESSO_COMPLETO":
+        if self.livello_accesso == LivelloAccesso.ACCESSO_COMPLETO.value:
             return True
         return azione == self.livello_accesso
 

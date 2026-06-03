@@ -6,7 +6,7 @@ class TableRepository(CSVRepository):
     def __init__(self) -> None:
         super().__init__(
             "tavoli.csv",
-            ["numero", "capienza", "coord_x", "coord_y", "stato", "data"],
+            ["numero", "capienza", "coordinata_x", "coordinata_y", "stato", "data"],
         )
 
     def _ensure_layout_cloned(self, target_date: str, df: pd.DataFrame) -> pd.DataFrame:

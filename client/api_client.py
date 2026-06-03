@@ -59,7 +59,7 @@ class APIClient:
     def riscatta_buono(cls, codice, user_id):
         res = requests.post(f"{cls.BASE_URL}/promo/riscatta", json={
             "codice": codice,
-            "id_beneficiario": user_id
+            "beneficiario_id": user_id
         })
         if res.status_code == 200:
             return True
@@ -75,7 +75,7 @@ class APIClient:
     @classmethod
     def acquista_buono(cls, id_acquirente, valore, data_scadenza):
         res = requests.post(f"{cls.BASE_URL}/promo/buoni", json={
-            "id_acquirente": id_acquirente,
+            "acquirente_id": id_acquirente,
             "valore": valore,
             "data_scadenza": data_scadenza
         })

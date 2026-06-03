@@ -125,14 +125,14 @@ class PrenotaWidget(QWidget):
                 elif stato == "DISDETTA": item_stato.setForeground(Qt.darkRed) # type: ignore
                 self.table.setItem(row, 4, item_stato)
                 
-                tavolo = str(p.get("id_tavolo", ""))
+                tavolo = str(p.get("tavolo_id", ""))
                 self.table.setItem(row, 5, QTableWidgetItem(tavolo if tavolo else "In Attesa"))
         except Exception as e:
             print(f"Errore caricamento prenotazioni: {e}")
 
     def effettua_prenotazione(self):
         dati = {
-            "id_cliente": self.user_data.get("id"),
+            "cliente_id": self.user_data.get("id"),
             "data": self.input_data.date().toString("yyyy-MM-dd"),
             "ora": self.input_ora.time().toString("HH:mm"),
             "numero_persone": self.input_persone.value(),

@@ -156,7 +156,7 @@ class PrenotazioniWidget(QWidget):
                 self.table.setItem(row, 2, _create_centered_item(p.get("data", "")))
                 self.table.setItem(row, 3, _create_centered_item(p.get("ora", "")))
                 self.table.setItem(row, 4, _create_centered_item(p.get("numero_persone", "")))
-                self.table.setItem(row, 5, _create_centered_item(p.get("id_tavolo", "-")))
+                self.table.setItem(row, 5, _create_centered_item(p.get("tavolo_id", "-")))
                 
                 item_stato = _create_centered_item(stato)
                 colore_hex = COLORI_STATO_PRENOTAZIONE.get(stato, "#000000")
@@ -189,7 +189,7 @@ class PrenotazioniWidget(QWidget):
                 QMessageBox.information(self, "Successo", f"Prenotazione confermata automaticamente al tavolo {result}.")
                 self.load_data()
             elif result == "OVERBOOKING":
-                nome = prenotazione.get("nome_ospite") or f"Cliente ID {prenotazione.get('id_cliente')}"
+                nome = prenotazione.get("nome_ospite") or f"Cliente ID {prenotazione.get('cliente_id')}"
                 self.lbl_overbooking.setText(f"> [WARNING] OVERBOOKING RILEVATO!\nLa richiesta di {nome} non ha tavoli compatibili liberi.")
                 self.panel_overbooking.show()
             else:

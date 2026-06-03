@@ -1,6 +1,6 @@
 id,nome,cognome,email,password,ruolo,livello_accesso,stato_account,ultimo_accesso,saldo_punti,piatti_preferiti
-1,Mario,Rossi,gestore@ristorante.it,gestore123,Gestore,ACCESSO_COMPLETO,ATTIVO,2026-06-03 12:30:04,0,
+1,Mario,Rossi,gestore@ristorante.it,gestore123,Gestore,ACCESSO_COMPLETO,ATTIVO,2026-06-03 16:05:16,0,
 2,Luigi,Verdi,sala@ristorante.it,sala123,Dipendente,ACCESSO_COMPLETO,ATTIVO,2026-06-03 12:58:04,0,
 3,Anna,Bianchi,cucina@ristorante.it,cucina123,Dipendente,GESTIONE_MENU,ATTIVO,,0,
-4,Giuseppe,Gialli,cliente@email.it,cliente123,Cliente,,ATTIVO,2026-06-03 12:47:06,50,
+4,Giuseppe,Gialli,cliente@email.it,cliente123,Cliente,,ATTIVO,2026-06-03 16:06:22,50,
 5,Sofia,Bontempo,caccaculo@gmail.com,ciao123,Cliente,,ATTIVO,2026-06-03 12:13:44,0,

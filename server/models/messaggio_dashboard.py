@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class MessaggioDashboard:
     id: int
-    id_autore: str
+    utente_id: str
     testo: str
     timestamp: str
