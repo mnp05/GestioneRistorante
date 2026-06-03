@@ -3,3 +3,4 @@ id,nome,descrizione,quantita_disponibile,unita_misura,soglia_minima,categoria_id
 2,Guanciale,Guanciale stagionato,10.0,Kg,3.0,,SUFFICIENTE
 3,Uova,Uova fresche,50.0,Pz,20.0,Uova e Derivati,SUFFICIENTE
 4,Pomodori Pelati,Latta da 5kg,15.0,Kg,5.0,Verdure,SUFFICIENTE
+5,farro,buono,4,kg,2,Farinacei,SUFFICIENTE

@@ -86,7 +86,8 @@ def delete_dipendente(dipendente_id):
 @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
     cliente_id = request.args.get('clienteId')
-    bookings = booking_ctrl.get_all_bookings()
+    data_filtro = request.args.get('data')
+    bookings = booking_ctrl.get_all_bookings(data_filtro) # type: ignore 
     if cliente_id:
         bookings = [b for b in bookings if str(b.get("id_cliente")) == cliente_id]
     return jsonify({"status": "success", "data": bookings}), 200
@@ -108,6 +109,13 @@ def update_booking(booking_id):
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Prenotazione non trovata"}), 404
 
+@app.route('/api/bookings/<booking_id>/auto_confirm', methods=['POST'])
+def auto_confirm_booking(booking_id):
+    tavolo_id = booking_ctrl.tenta_auto_conferma(booking_id)
+    if tavolo_id:
+        return jsonify({"status": "success", "id_tavolo": tavolo_id}), 200
+    return jsonify({"status": "error", "error_code": "OVERBOOKING", "message": "Nessun tavolo compatibile libero."}), 400
+
 @app.route('/api/bookings/<booking_id>', methods=['DELETE'])
 def delete_booking(booking_id):
     success = booking_ctrl.annulla_prenotazione(booking_id)
@@ -117,7 +125,8 @@ def delete_booking(booking_id):
 
 @app.route('/api/tables', methods=['GET'])
 def get_tables():
-    return jsonify({"status": "success", "data": booking_ctrl.get_tavoli()}), 200
+    data_filtro = request.args.get('data')
+    return jsonify({"status": "success", "data": booking_ctrl.get_tavoli(data_filtro)}), 200 # type: ignore
 
 @app.route('/api/tables/<numero>', methods=['PUT'])
 def update_table_status(numero):
@@ -315,4 +324,4 @@ def delete_dashboard_message(msg_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)

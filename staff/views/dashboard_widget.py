@@ -1,9 +1,8 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-                             QPushButton, QTextEdit, QScrollArea, QFrame,
-                             QMessageBox)
+                             QPushButton, QScrollArea, QFrame,
+                             QMessageBox, QLineEdit)
 from PyQt5.QtCore import Qt
 from staff.api_client import StaffAPIClient
-
 
 class StaffDashboardWidget(QWidget):
     def __init__(self, user_data):
@@ -16,9 +15,10 @@ class StaffDashboardWidget(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
 
+        # TITOLO IN ALTO
         top_layout = QHBoxLayout()
-        titolo = QLabel("Bacheca Messaggi Interni")
-        titolo.setStyleSheet("font-size: 14px; font-weight: bold; color: #555;")
+        titolo = QLabel("BACHECA MESSAGGI DI SERVIZIO:")
+        titolo.setStyleSheet("font-size: 16px; font-weight: bold; color: #555;")
         top_layout.addWidget(titolo)
         top_layout.addStretch()
 
@@ -26,45 +26,63 @@ class StaffDashboardWidget(QWidget):
         btn_refresh.setStyleSheet("""
             QPushButton {
                 background-color: #8C1515; color: white;
-                border-radius: 10px; padding: 6px 16px; font-weight: bold;
+                border-radius: 5px; padding: 6px 16px; font-weight: bold;
             }
             QPushButton:hover { background-color: #A31F1F; }
         """)
         btn_refresh.clicked.connect(self.load_data)
         top_layout.addWidget(btn_refresh)
+        
         layout.addLayout(top_layout)
 
-        nuovo_msg_layout = QHBoxLayout()
-        self.input_messaggio = QTextEdit()
-        self.input_messaggio.setMaximumHeight(60)
-        self.input_messaggio.setPlaceholderText("Scrivi un messaggio per lo staff...")
-        self.input_messaggio.setStyleSheet("border: 1px solid #E0E0E0; padding: 5px;")
-
-        btn_pubblica = QPushButton("Pubblica")
-        btn_pubblica.setFixedHeight(60)
-        btn_pubblica.setStyleSheet("""
-            QPushButton {
-                background-color: #4CAF50; color: white;
-                border-radius: 10px; padding: 8px 20px; font-weight: bold;
-            }
-            QPushButton:hover { background-color: #66BB6A; }
-        """)
-        btn_pubblica.clicked.connect(self.pubblica_messaggio)
-
-        nuovo_msg_layout.addWidget(self.input_messaggio)
-        nuovo_msg_layout.addWidget(btn_pubblica)
-        layout.addLayout(nuovo_msg_layout)
-
+        # AREA MESSAGGI AL CENTRO
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("border: none;")
 
         self.messaggi_container = QWidget()
         self.messaggi_layout = QVBoxLayout(self.messaggi_container)
-        self.messaggi_layout.setAlignment(Qt.AlignTop)  # type: ignore
+        self.messaggi_layout.setAlignment(Qt.AlignTop) # type: ignore
         scroll.setWidget(self.messaggi_container)
 
         layout.addWidget(scroll)
+
+        # INSERIMENTO TESTO IN BASSO
+        input_layout = QHBoxLayout()
+        lbl_scrivi = QLabel("Scrivi Messaggio:")
+        lbl_scrivi.setStyleSheet("color: #555;")
+        input_layout.addWidget(lbl_scrivi)
+
+        self.input_messaggio = QLineEdit()
+        self.input_messaggio.setPlaceholderText("Scrivi qui il tuo messaggio...")
+        self.input_messaggio.setStyleSheet("""
+            QLineEdit {
+                border: 2px dashed #555;
+                padding: 8px;
+                background-color: white;
+            }
+        """)
+        input_layout.addWidget(self.input_messaggio)
+        
+        layout.addLayout(input_layout)
+
+        # BOTTONE INVIA
+        btn_invia_layout = QHBoxLayout()
+        btn_invia_layout.addStretch()
+        
+        btn_pubblica = QPushButton("INVIA NOTA")
+        btn_pubblica.setStyleSheet("""
+            QPushButton {
+                background-color: #8C0000; color: white;
+                border-radius: 15px; padding: 10px 30px; font-weight: bold;
+            }
+            QPushButton:hover { background-color: #A30000; }
+        """)
+        btn_pubblica.clicked.connect(self.pubblica_messaggio)
+        btn_invia_layout.addWidget(btn_pubblica)
+        
+        layout.addLayout(btn_invia_layout)
+
         self.setLayout(layout)
 
     def load_data(self):
@@ -78,7 +96,7 @@ class StaffDashboardWidget(QWidget):
             if not messaggi:
                 lbl_vuoto = QLabel("Nessun messaggio in bacheca.")
                 lbl_vuoto.setStyleSheet("color: gray; font-style: italic; padding: 20px;")
-                lbl_vuoto.setAlignment(Qt.AlignCenter)  # type: ignore
+                lbl_vuoto.setAlignment(Qt.AlignCenter) # type: ignore
                 self.messaggi_layout.addWidget(lbl_vuoto)
                 return
 
@@ -93,26 +111,33 @@ class StaffDashboardWidget(QWidget):
         card = QFrame()
         card.setStyleSheet("""
             QFrame {
-                background-color: #FFF8E1;
-                border: 1px solid #E0E0E0;
-                border-radius: 8px;
+                background-color: #E0E0E0;
+                border: 1px solid #BDBDBD;
             }
         """)
         card_layout = QVBoxLayout(card)
-        card_layout.setContentsMargins(12, 8, 12, 8)
+        card_layout.setContentsMargins(15, 15, 15, 15)
+        card_layout.setSpacing(10)
 
         header_layout = QHBoxLayout()
-        lbl_autore = QLabel(f"Autore ID: {msg.get('id_autore', '?')}")
-        lbl_autore.setStyleSheet("font-weight: bold; color: #8C1515; border: none;")
+        
+        ruolo = str(msg.get("ruolo_autore", "DIPENDENTE")).upper()
+        nome = str(msg.get("nome_autore", "")).upper()
+        cognome = str(msg.get("cognome_autore", "")).upper()
+        
+        lbl_autore = QLabel(f"DA: {ruolo} - {nome} {cognome}")
+        lbl_autore.setStyleSheet("font-weight: bold; color: #555; border: none;")
+        
         lbl_data = QLabel(msg.get("timestamp", ""))
         lbl_data.setStyleSheet("color: gray; font-size: 11px; border: none;")
+        
         header_layout.addWidget(lbl_autore)
         header_layout.addStretch()
         header_layout.addWidget(lbl_data)
 
         lbl_testo = QLabel(msg.get("testo", ""))
         lbl_testo.setWordWrap(True)
-        lbl_testo.setStyleSheet("border: none; padding: 4px 0;")
+        lbl_testo.setStyleSheet("border: none; padding: 5px 0; color: #333; font-size: 13px;")
 
         is_proprio = str(msg.get("id_autore")) == str(self.user_data.get("id"))
         is_gestore = self.user_data.get("ruolo") == "Gestore"
@@ -125,19 +150,19 @@ class StaffDashboardWidget(QWidget):
             btn_elimina.setFixedWidth(80)
             btn_elimina.setStyleSheet("""
                 QPushButton {
-                    background-color: #F44336; color: white;
-                    border-radius: 8px; padding: 4px; font-size: 11px;
+                    background-color: transparent; color: #F44336;
+                    text-decoration: underline; border: none; font-size: 11px;
                 }
-                QPushButton:hover { background-color: #EF5350; }
+                QPushButton:hover { color: #D32F2F; }
             """)
             msg_id = msg.get("id")
             btn_elimina.clicked.connect(lambda checked, mid=msg_id: self.elimina_messaggio(mid))
-            card_layout.addWidget(btn_elimina, alignment=Qt.AlignRight)  # type: ignore
+            card_layout.addWidget(btn_elimina, alignment=Qt.AlignRight) # type: ignore
 
         return card
 
     def pubblica_messaggio(self):
-        testo = self.input_messaggio.toPlainText().strip()
+        testo = self.input_messaggio.text().strip()
         if not testo:
             QMessageBox.warning(self, "Attenzione", "Scrivi un messaggio prima di pubblicare.")
             return

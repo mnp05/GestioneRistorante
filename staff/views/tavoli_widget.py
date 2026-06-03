@@ -111,6 +111,17 @@ class TavoliWidget(QWidget):
         
         toolbar_layout.addStretch()
 
+        from PyQt5.QtWidgets import QDateEdit
+        from PyQt5.QtCore import QDate
+        toolbar_layout.addWidget(QLabel("Data:"))
+        self.date_picker = QDateEdit()
+        self.date_picker.setCalendarPopup(True)
+        self.date_picker.setDate(QDate.currentDate())
+        self.date_picker.dateChanged.connect(self.load_data)
+        toolbar_layout.addWidget(self.date_picker)
+
+        toolbar_layout.addStretch()
+
         legenda_layout = QHBoxLayout()
         for stato, colore in COLORI_STATO.items():
             lbl = QLabel(f"  {stato}  ")
@@ -145,7 +156,8 @@ class TavoliWidget(QWidget):
         self.bottoni_tavoli.clear()
 
         try:
-            self.tavoli_data = StaffAPIClient.get_tavoli()
+            data_str = self.date_picker.date().toString("yyyy-MM-dd")
+            self.tavoli_data = StaffAPIClient.get_tavoli(data_str)
         except Exception as e:
             QMessageBox.warning(self, "Errore", f"Impossibile caricare i tavoli:\n{e}")
             return

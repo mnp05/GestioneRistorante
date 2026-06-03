@@ -1,12 +1,26 @@
 from datetime import datetime
 from server.repositories.dashboard_repository import DashboardRepository
+from server.repositories.user_repository import UserRepository
 
 class DashboardController:
     def __init__(self):
         self.dash_repo = DashboardRepository()
+        self.user_repo = UserRepository()
 
     def get_messaggi(self) -> list[dict]:
         messaggi = self.dash_repo.get_all()
+        users = {str(u["id"]): u for u in self.user_repo.get_all()}
+        for msg in messaggi:
+            author_id = str(msg.get("id_autore", ""))
+            if author_id in users:
+                msg["nome_autore"] = users[author_id].get("nome", "")
+                msg["cognome_autore"] = users[author_id].get("cognome", "")
+                msg["ruolo_autore"] = users[author_id].get("ruolo", "Dipendente")
+            else:
+                msg["nome_autore"] = "Utente rimosso"
+                msg["cognome_autore"] = ""
+                msg["ruolo_autore"] = "Sconosciuto"
+
         # Ordiniamo in modo decrescente per avere il più recente in alto
         messaggi.sort(key=lambda x: str(x.get("timestamp", "")), reverse=True)
         return messaggi

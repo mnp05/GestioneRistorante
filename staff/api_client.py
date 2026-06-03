@@ -51,8 +51,11 @@ class StaffAPIClient:
     # --- TAVOLI ---
 
     @classmethod
-    def get_tavoli(cls):
-        res = requests.get(f"{cls.BASE_URL}/tables")
+    def get_tavoli(cls, data=None):
+        params = {}
+        if data:
+            params["data"] = data
+        res = requests.get(f"{cls.BASE_URL}/tables", params=params)
         if res.status_code == 200:
             return res.json().get("data", [])
         return []
@@ -77,8 +80,11 @@ class StaffAPIClient:
     # --- PRENOTAZIONI ---
 
     @classmethod
-    def get_prenotazioni(cls):
-        res = requests.get(f"{cls.BASE_URL}/bookings")
+    def get_prenotazioni(cls, data=None):
+        params = {}
+        if data:
+            params["data"] = data
+        res = requests.get(f"{cls.BASE_URL}/bookings", params=params)
         if res.status_code == 200:
             return res.json().get("data", [])
         return []
@@ -93,6 +99,18 @@ class StaffAPIClient:
     @classmethod
     def annulla_prenotazione(cls, booking_id):
         res = requests.delete(f"{cls.BASE_URL}/bookings/{booking_id}")
+        return res.status_code == 200
+
+    @classmethod
+    def auto_conferma_prenotazione(cls, booking_id):
+        res = requests.post(f"{cls.BASE_URL}/bookings/{booking_id}/auto_confirm")
+        if res.status_code == 200:
+            return True, res.json().get("id_tavolo")
+        return False, res.json().get("error_code")
+
+    @classmethod
+    def modifica_prenotazione(cls, booking_id, dati):
+        res = requests.put(f"{cls.BASE_URL}/bookings/{booking_id}", json=dati)
         return res.status_code == 200
 
     # --- MENU ---
