@@ -63,7 +63,9 @@ class PrenotazioniWidget(QWidget):
         self.table.setHorizontalHeaderLabels([
             "ID", "Cliente", "Data", "Ora", "Persone", "Tavolo", "Stato", "Note"
         ])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
+        header = self.table.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.ResizeToContents) # type: ignore
+        header.setSectionResizeMode(7, QHeaderView.Stretch) # type: ignore
         self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
         self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
         layout.addWidget(self.table)
@@ -141,24 +143,31 @@ class PrenotazioniWidget(QWidget):
                 data_str = self.date_picker.date().toString("yyyy-MM-dd")
                 self.prenotazioni_data = StaffAPIClient.get_prenotazioni(data_str)
                 
+            def _create_centered_item(text):
+                item = QTableWidgetItem(str(text))
+                item.setTextAlignment(Qt.AlignCenter) # type: ignore
+                return item
+
             self.table.setRowCount(len(self.prenotazioni_data))
             for row, p in enumerate(self.prenotazioni_data):
                 stato = p.get("stato", "")
-                self.table.setItem(row, 0, QTableWidgetItem(str(p.get("id", ""))))
-                self.table.setItem(row, 1, QTableWidgetItem(p.get("nome_cliente", "")))
-                self.table.setItem(row, 2, QTableWidgetItem(p.get("data", "")))
-                self.table.setItem(row, 3, QTableWidgetItem(p.get("ora", "")))
-                self.table.setItem(row, 4, QTableWidgetItem(str(p.get("numero_persone", ""))))
-                self.table.setItem(row, 5, QTableWidgetItem(str(p.get("id_tavolo", "-"))))
-                item_stato = QTableWidgetItem(stato)
+                self.table.setItem(row, 0, _create_centered_item(p.get("id", "")))
+                self.table.setItem(row, 1, _create_centered_item(p.get("nome_cliente", "")))
+                self.table.setItem(row, 2, _create_centered_item(p.get("data", "")))
+                self.table.setItem(row, 3, _create_centered_item(p.get("ora", "")))
+                self.table.setItem(row, 4, _create_centered_item(p.get("numero_persone", "")))
+                self.table.setItem(row, 5, _create_centered_item(p.get("id_tavolo", "-")))
+                
+                item_stato = _create_centered_item(stato)
                 colore_hex = COLORI_STATO_PRENOTAZIONE.get(stato, "#000000")
                 from PyQt5.QtGui import QColor
                 item_stato.setForeground(QColor(colore_hex))
                 self.table.setItem(row, 6, item_stato)
+                
                 note = p.get("note", "")
                 allergeni = p.get("allergeni", "")
                 info = f"{note} | Allergeni: {allergeni}" if allergeni else note
-                self.table.setItem(row, 7, QTableWidgetItem(info))
+                self.table.setItem(row, 7, QTableWidgetItem(str(info)))
         except Exception as e:
             QMessageBox.warning(self, "Errore", f"Impossibile caricare le prenotazioni:\n{e}")
 

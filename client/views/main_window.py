@@ -55,12 +55,13 @@ class MainWindow(QMainWindow):
 
         # Tabs (Dashboard, Menù, Prenota)
         self.tabs = QTabWidget()
+        self.tabs.tabBar().setExpanding(True)
         self.tabs.setStyleSheet("""
             QTabWidget::pane { border: 0; }
             QTabBar::tab {
                 background-color: #C04A4A;
                 color: white;
-                padding: 10px 40px;
+                height: 40px;
                 font-weight: bold;
             }
             QTabBar::tab:selected {
