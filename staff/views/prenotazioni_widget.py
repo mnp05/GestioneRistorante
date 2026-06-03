@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QPushButton, QTableWidget, QTableWidgetItem,
-                             QHeaderView, QMessageBox, QInputDialog)
+                             QHeaderView, QMessageBox, QInputDialog,
+                             QDialog, QFormLayout, QLineEdit, QDateEdit, QTimeEdit, QSpinBox, QDialogButtonBox)
 from PyQt5.QtCore import Qt
 from staff.api_client import StaffAPIClient
 
@@ -12,6 +13,83 @@ COLORI_STATO_PRENOTAZIONE = {
     "ANNULLATA": "#9E9E9E",
 }
 
+
+class PrenotazioneDialog(QDialog):
+    def __init__(self, parent=None, dati_esistenti=None):
+        super().__init__(parent)
+        self.setWindowTitle("Dati Prenotazione")
+        self.form_layout = QFormLayout(self)
+        
+        self.lista_clienti = StaffAPIClient.get_clienti()
+        
+        self.inp_nome = QLineEdit()
+        
+        nomi_clienti = [f"{c.get('nome', '')} {c.get('cognome', '')}".strip() for c in self.lista_clienti]
+        from PyQt5.QtWidgets import QCompleter
+        completer = QCompleter(nomi_clienti, self)
+        completer.setCaseSensitivity(Qt.CaseInsensitive) # type: ignore
+        self.inp_nome.setCompleter(completer)
+        
+        self.inp_data = QDateEdit()
+        self.inp_data.setCalendarPopup(True)
+        from PyQt5.QtCore import QDate, QTime
+        self.inp_data.setDate(QDate.currentDate())
+        self.inp_ora = QTimeEdit()
+        self.inp_ora.setTime(QTime(20, 0))
+        self.inp_persone = QSpinBox()
+        self.inp_persone.setRange(1, 30)
+        self.inp_allergeni = QLineEdit()
+        self.inp_note = QLineEdit()
+        
+        if dati_esistenti:
+            self.inp_nome.setText(dati_esistenti.get("nome_ospite", dati_esistenti.get("nome_cliente", "")))
+            d_str = dati_esistenti.get("data", "")
+            if d_str:
+                self.inp_data.setDate(QDate.fromString(d_str, "yyyy-MM-dd"))
+            o_str = dati_esistenti.get("ora", "")
+            if o_str:
+                self.inp_ora.setTime(QTime.fromString(o_str, "HH:mm"))
+            try:
+                self.inp_persone.setValue(int(dati_esistenti.get("numero_persone", 1)))
+            except:
+                pass
+            self.inp_allergeni.setText(dati_esistenti.get("allergeni", ""))
+            self.inp_note.setText(dati_esistenti.get("note", ""))
+            
+        self.form_layout.addRow("Nome Ospite (Walk-in):", self.inp_nome)
+        self.form_layout.addRow("Data:", self.inp_data)
+        self.form_layout.addRow("Ora:", self.inp_ora)
+        self.form_layout.addRow("Numero Persone:", self.inp_persone)
+        self.form_layout.addRow("Allergeni:", self.inp_allergeni)
+        self.form_layout.addRow("Note:", self.inp_note)
+        
+        self.btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) # type: ignore
+        self.btns.accepted.connect(self.accept)
+        self.btns.rejected.connect(self.reject)
+        self.form_layout.addRow(self.btns)
+        
+    def get_dati(self):
+        nome_inserito = self.inp_nome.text().strip()
+        cliente_id = ""
+        nome_ospite = nome_inserito
+        
+        # Cerca se il nome inserito combacia con un cliente registrato
+        for c in self.lista_clienti:
+            nome_completo = f"{c.get('nome', '')} {c.get('cognome', '')}".strip()
+            if nome_completo.lower() == nome_inserito.lower():
+                cliente_id = str(c.get("id"))
+                nome_ospite = ""  # Essendo registrato, diamo precedenza all'ID
+                break
+                
+        return {
+            "nome_ospite": nome_ospite,
+            "data": self.inp_data.date().toString("yyyy-MM-dd"),
+            "ora": self.inp_ora.time().toString("HH:mm"),
+            "numero_persone": self.inp_persone.value(),
+            "allergeni": self.inp_allergeni.text().strip(),
+            "note": self.inp_note.text().strip(),
+            "cliente_id": cliente_id
+        }
 
 class PrenotazioniWidget(QWidget):
     def __init__(self):
@@ -92,8 +170,30 @@ class PrenotazioniWidget(QWidget):
         """)
         self.btn_annulla.clicked.connect(self.annulla_selezionata)
 
+        self.btn_aggiungi = QPushButton("Nuova (Walk-in)")
+        self.btn_aggiungi.setStyleSheet("""
+            QPushButton {
+                background-color: #2196F3; color: white;
+                border-radius: 10px; padding: 8px 16px; font-weight: bold;
+            }
+            QPushButton:hover { background-color: #42A5F5; }
+        """)
+        self.btn_aggiungi.clicked.connect(self.aggiungi_prenotazione)
+
+        self.btn_modifica = QPushButton("Modifica")
+        self.btn_modifica.setStyleSheet("""
+            QPushButton {
+                background-color: #FF9800; color: white;
+                border-radius: 10px; padding: 8px 16px; font-weight: bold;
+            }
+            QPushButton:hover { background-color: #FFB74D; }
+        """)
+        self.btn_modifica.clicked.connect(self.modifica_selezionata)
+
         btn_layout.addStretch()
+        btn_layout.addWidget(self.btn_aggiungi)
         btn_layout.addWidget(self.btn_conferma)
+        btn_layout.addWidget(self.btn_modifica)
         btn_layout.addWidget(self.btn_annulla)
         btn_layout.addStretch()
         layout.addLayout(btn_layout)
@@ -284,5 +384,48 @@ class PrenotazioniWidget(QWidget):
                     self.load_data()
                 else:
                     QMessageBox.warning(self, "Errore", "Impossibile annullare la prenotazione.")
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
+
+    def aggiungi_prenotazione(self):
+        dialog = PrenotazioneDialog(self)
+        if dialog.exec_() == QDialog.Accepted:
+            dati = dialog.get_dati()
+            # Errore solo se non c'è né un nome ospite né un cliente registrato associato
+            if not dati["nome_ospite"] and not dati["cliente_id"]:
+                QMessageBox.warning(self, "Errore", "Inserisci il nome dell'ospite per la prenotazione manuale.")
+                return
+            try:
+                nuova_prenotazione = StaffAPIClient.crea_prenotazione(dati)
+                
+                # Tentiamo l'auto-conferma immediata (se possibile)
+                success, result = StaffAPIClient.auto_conferma_prenotazione(nuova_prenotazione.get("id"))
+                if success:
+                    QMessageBox.information(self, "Successo", f"Prenotazione aggiunta e confermata automaticamente al tavolo {result}.")
+                else:
+                    QMessageBox.information(self, "Attenzione", "Prenotazione aggiunta in stato RICHIESTA.\nNon ci sono tavoli compatibili liberi (Overbooking).")
+                    
+                self.load_data()
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
+
+    def modifica_selezionata(self):
+        row = self.table.currentRow()
+        if row < 0:
+            QMessageBox.warning(self, "Attenzione", "Seleziona una prenotazione dalla tabella.")
+            return
+
+        prenotazione = self.prenotazioni_data[row]
+        dialog = PrenotazioneDialog(self, dati_esistenti=prenotazione)
+        
+        if dialog.exec_() == QDialog.Accepted:
+            dati_modificati = dialog.get_dati()
+            try:
+                success = StaffAPIClient.modifica_prenotazione(prenotazione.get("id"), dati_modificati)
+                if success:
+                    QMessageBox.information(self, "Successo", "Prenotazione modificata con successo.")
+                    self.load_data()
+                else:
+                    QMessageBox.warning(self, "Errore", "Impossibile modificare la prenotazione.")
             except Exception as e:
                 QMessageBox.warning(self, "Errore", str(e))

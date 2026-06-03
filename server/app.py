@@ -56,8 +56,12 @@ def create_dipendente():
         return jsonify({"status": "error", "message": str(e)}), 403
 
 @app.route('/api/auth/dipendenti', methods=['GET'])
-def get_dipendenti():
+def get_all_employees():
     return jsonify({"status": "success", "data": auth_ctrl.handle_get_all_employees()}), 200
+
+@app.route('/api/auth/clienti', methods=['GET'])
+def get_all_clients():
+    return jsonify({"status": "success", "data": auth_ctrl.handle_get_all_clients()}), 200
 
 @app.route('/api/auth/dipendente/<dipendente_id>', methods=['PUT'])
 def update_dipendente(dipendente_id):
@@ -182,9 +186,16 @@ def update_menu_item(item_id):
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Piatto non trovato"}), 404
 
+@app.route('/api/menu/<item_id>/deactivate', methods=['PUT'])
+def deactivate_menu_item(item_id):
+    success = menu_ctrl.deactivate_product(item_id)
+    if success:
+        return jsonify({"status": "success"}), 200
+    return jsonify({"status": "error", "message": "Piatto non trovato"}), 404
+
 @app.route('/api/menu/<item_id>', methods=['DELETE'])
 def delete_menu_item(item_id):
-    success = menu_ctrl.deactivate_product(item_id)
+    success = menu_ctrl.delete_product(item_id)
     if success:
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Piatto non trovato"}), 404

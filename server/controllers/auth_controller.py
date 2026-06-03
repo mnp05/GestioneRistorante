@@ -54,6 +54,10 @@ class AuthController:
         utenti = self.user_repo.get_all()
         return [u for u in utenti if u.get("ruolo") in ["Dipendente", "Gestore"]]
 
+    def handle_get_all_clients(self) -> list[dict]:
+        utenti = self.user_repo.get_all()
+        return [u for u in utenti if u.get("ruolo") == "Cliente"]
+
     def handle_remove_employee(self, creatore_id: str, dipendente_id: str) -> bool:
         creatore = self.user_repo.get_by_id(creatore_id)
         if not creatore or creatore.get("ruolo") != "Gestore":

@@ -47,7 +47,7 @@ class StaffMenuWidget(QWidget):
 
         btn_layout = QHBoxLayout()
 
-        btn_aggiungi = QPushButton("Aggiungi Piatto")
+        btn_aggiungi = QPushButton("Aggiungi Prodotto")
         btn_aggiungi.setStyleSheet("""
             QPushButton {
                 background-color: #4CAF50; color: white;
@@ -57,7 +57,7 @@ class StaffMenuWidget(QWidget):
         """)
         btn_aggiungi.clicked.connect(self.aggiungi_piatto)
 
-        btn_modifica = QPushButton("Modifica Piatto")
+        btn_modifica = QPushButton("Modifica Prodotto")
         btn_modifica.setStyleSheet("""
             QPushButton {
                 background-color: #FF9800; color: white;
@@ -67,7 +67,7 @@ class StaffMenuWidget(QWidget):
         """)
         btn_modifica.clicked.connect(self.modifica_piatto)
 
-        btn_disattiva = QPushButton("Disattiva Piatto")
+        btn_disattiva = QPushButton("Disattiva Prodotto")
         btn_disattiva.setStyleSheet("""
             QPushButton {
                 background-color: #F44336; color: white;
@@ -76,8 +76,18 @@ class StaffMenuWidget(QWidget):
             QPushButton:hover { background-color: #EF5350; }
         """)
         btn_disattiva.clicked.connect(self.disattiva_piatto)
+        
+        btn_elimina = QPushButton("Elimina Prodotto")
+        btn_elimina.setStyleSheet("""
+            QPushButton {
+                background-color: #8C1515; color: white;
+                border-radius: 10px; padding: 8px 16px; font-weight: bold;
+            }
+            QPushButton:hover { background-color: #A31F1F; }
+        """)
+        btn_elimina.clicked.connect(self.elimina_definitivo)
 
-        btn_attiva = QPushButton("Riattiva Piatto")
+        btn_attiva = QPushButton("Attiva Prodotto")
         btn_attiva.setStyleSheet("""
             QPushButton {
                 background-color: #2196F3; color: white;
@@ -92,6 +102,7 @@ class StaffMenuWidget(QWidget):
         btn_layout.addWidget(btn_modifica)
         btn_layout.addWidget(btn_disattiva)
         btn_layout.addWidget(btn_attiva)
+        btn_layout.addWidget(btn_elimina)
         btn_layout.addStretch()
         layout.addLayout(btn_layout)
 
@@ -190,12 +201,36 @@ class StaffMenuWidget(QWidget):
 
         if risposta == QMessageBox.Yes:
             try:
-                success = StaffAPIClient.elimina_piatto(piatto.get("id"))
+                success = StaffAPIClient.disattiva_piatto(piatto.get("id"))
                 if success:
                     QMessageBox.information(self, "Successo", "Piatto disattivato.")
                     self.load_data()
                 else:
                     QMessageBox.warning(self, "Errore", "Impossibile disattivare il piatto.")
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
+
+    def elimina_definitivo(self):
+        row = self.table.currentRow()
+        if row < 0:
+            QMessageBox.warning(self, "Attenzione", "Seleziona un piatto dalla tabella.")
+            return
+
+        piatto = self.piatti_data[row]
+        risposta = QMessageBox.question(
+            self, "Conferma Eliminazione",
+            f"Vuoi davvero eliminare fisicamente il piatto '{piatto.get('nome')}' dal database?\nAttenzione: l'operazione è irreversibile e potrebbe causare errori se il piatto è presente in ordini passati.",
+            QMessageBox.Yes | QMessageBox.No # type: ignore
+        )
+
+        if risposta == QMessageBox.Yes:
+            try:
+                success = StaffAPIClient.rimuovi_piatto_definitivamente(piatto.get("id"))
+                if success:
+                    QMessageBox.information(self, "Successo", "Piatto eliminato definitivamente dal sistema.")
+                    self.load_data()
+                else:
+                    QMessageBox.warning(self, "Errore", "Impossibile eliminare il piatto.")
             except Exception as e:
                 QMessageBox.warning(self, "Errore", str(e))
 

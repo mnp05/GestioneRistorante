@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QPushButton, QScrollArea, QFrame,
-                             QMessageBox, QLineEdit)
+                             QMessageBox, QLineEdit, QInputDialog)
 from PyQt5.QtCore import Qt
 from staff.api_client import StaffAPIClient
 
@@ -145,6 +145,24 @@ class StaffDashboardWidget(QWidget):
         card_layout.addLayout(header_layout)
         card_layout.addWidget(lbl_testo)
 
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch()
+
+        if is_proprio:
+            btn_modifica = QPushButton("Modifica")
+            btn_modifica.setFixedWidth(60)
+            btn_modifica.setStyleSheet("""
+                QPushButton {
+                    background-color: transparent; color: #2196F3;
+                    text-decoration: underline; border: none; font-size: 11px;
+                }
+                QPushButton:hover { color: #0b7dda; }
+            """)
+            msg_id = msg.get("id")
+            testo = msg.get("testo", "")
+            btn_modifica.clicked.connect(lambda checked, mid=msg_id, txt=testo: self.modifica_messaggio(mid, txt))
+            buttons_layout.addWidget(btn_modifica)
+
         if is_proprio or is_gestore:
             btn_elimina = QPushButton("Elimina")
             btn_elimina.setFixedWidth(80)
@@ -157,7 +175,10 @@ class StaffDashboardWidget(QWidget):
             """)
             msg_id = msg.get("id")
             btn_elimina.clicked.connect(lambda checked, mid=msg_id: self.elimina_messaggio(mid))
-            card_layout.addWidget(btn_elimina, alignment=Qt.AlignRight) # type: ignore
+            buttons_layout.addWidget(btn_elimina)
+
+        if is_proprio or is_gestore:
+            card_layout.addLayout(buttons_layout)
 
         return card
 
@@ -190,5 +211,19 @@ class StaffDashboardWidget(QWidget):
                     self.load_data()
                 else:
                     QMessageBox.warning(self, "Errore", "Impossibile eliminare il messaggio.")
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
+
+    def modifica_messaggio(self, msg_id, testo_attuale):
+        nuovo_testo, ok = QInputDialog.getMultiLineText(
+            self, "Modifica Messaggio", "Testo del messaggio:", testo_attuale
+        )
+        if ok and nuovo_testo.strip():
+            try:
+                success = StaffAPIClient.modifica_messaggio(
+                    msg_id, self.user_data.get("id"), nuovo_testo.strip()
+                )
+                if success:
+                    self.load_data()
             except Exception as e:
                 QMessageBox.warning(self, "Errore", str(e))

@@ -40,6 +40,13 @@ class StaffAPIClient:
         raise ValueError(res.json().get("message", "Errore aggiornamento dipendente"))
 
     @classmethod
+    def get_clienti(cls):
+        res = requests.get(f"{cls.BASE_URL}/auth/clienti")
+        if res.status_code == 200:
+            return res.json().get("data", [])
+        return []
+
+    @classmethod
     def elimina_dipendente(cls, creatore_id, dipendente_id):
         res = requests.delete(f"{cls.BASE_URL}/auth/dipendente/{dipendente_id}", json={
             "creatore_id": creatore_id
@@ -96,6 +103,13 @@ class StaffAPIClient:
         return []
 
     @classmethod
+    def crea_prenotazione(cls, dati):
+        res = requests.post(f"{cls.BASE_URL}/bookings", json=dati)
+        if res.status_code == 201:
+            return res.json().get("data")
+        raise ValueError(res.json().get("message", "Errore durante la creazione"))
+
+    @classmethod
     def conferma_prenotazione(cls, booking_id, tavolo_id):
         res = requests.put(f"{cls.BASE_URL}/bookings/{booking_id}", json={
             "stato": "CONFERMATA", "tavolo_id": tavolo_id
@@ -141,7 +155,12 @@ class StaffAPIClient:
         return res.status_code == 200
 
     @classmethod
-    def elimina_piatto(cls, piatto_id):
+    def disattiva_piatto(cls, piatto_id):
+        res = requests.put(f"{cls.BASE_URL}/menu/{piatto_id}/deactivate")
+        return res.status_code == 200
+
+    @classmethod
+    def rimuovi_piatto_definitivamente(cls, piatto_id):
         res = requests.delete(f"{cls.BASE_URL}/menu/{piatto_id}")
         return res.status_code == 200
 
@@ -208,6 +227,15 @@ class StaffAPIClient:
         if res.status_code == 201:
             return res.json().get("data")
         raise ValueError(res.json().get("message", "Errore pubblicazione messaggio"))
+
+    @classmethod
+    def modifica_messaggio(cls, msg_id, autore_id, nuovo_testo):
+        res = requests.put(f"{cls.BASE_URL}/dashboard/{msg_id}", json={
+            "autore_id": autore_id, "testo": nuovo_testo
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore modifica messaggio"))
 
     @classmethod
     def elimina_messaggio(cls, msg_id, utente_id, ruolo):

@@ -54,6 +54,13 @@ class InventarioWidget(QWidget):
         self.combo_filtro.currentTextChanged.connect(self.applica_filtro)
         filter_layout.addWidget(self.combo_filtro)
         
+        filter_layout.addSpacing(10)
+        filter_layout.addWidget(QLabel("Cerca:"))
+        self.inp_ricerca = QLineEdit()
+        self.inp_ricerca.setPlaceholderText("Cerca ingrediente...")
+        self.inp_ricerca.textChanged.connect(self.applica_filtro)
+        filter_layout.addWidget(self.inp_ricerca)
+        
         btn_elimina_cat = QPushButton("Elimina Categoria Attuale")
         btn_elimina_cat.setStyleSheet("background-color: #F44336; color: white; border-radius: 5px; padding: 4px 8px;")
         btn_elimina_cat.clicked.connect(self.elimina_categoria)
@@ -149,10 +156,14 @@ class InventarioWidget(QWidget):
 
     def applica_filtro(self):
         categoria_filtro = self.combo_filtro.currentText()
+        testo_ricerca = self.inp_ricerca.text().lower().strip()
         dati_filtrati = self.inventario_data
         
         if categoria_filtro != "Tutte":
-            dati_filtrati = [i for i in self.inventario_data if i.get("categoria_id", "") == categoria_filtro]
+            dati_filtrati = [i for i in dati_filtrati if i.get("categoria_id", "") == categoria_filtro]
+            
+        if testo_ricerca:
+            dati_filtrati = [i for i in dati_filtrati if testo_ricerca in i.get("nome", "").lower() or testo_ricerca in i.get("descrizione", "").lower()]
             
         self.table.setRowCount(len(dati_filtrati))
         alert_count = 0
