@@ -13,6 +13,23 @@ class StaffAPIClient:
         raise ValueError(res.json().get("message", "Errore di login"))
 
     @classmethod
+    def cambia_password(cls, user_id, old_pw, new_pw):
+        res = requests.put(f"{cls.BASE_URL}/auth/password/{user_id}", json={
+            "old_password": old_pw,
+            "new_password": new_pw
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore durante il cambio password"))
+
+    @classmethod
+    def recupera_password(cls, email):
+        res = requests.post(f"{cls.BASE_URL}/auth/recover", json={"email": email})
+        if res.status_code == 200:
+            return res.json().get("password")
+        raise ValueError(res.json().get("message", "Impossibile recuperare la password"))
+
+    @classmethod
     def crea_dipendente(cls, creatore_id, nome, cognome, email, password, livello_accesso):
         res = requests.post(f"{cls.BASE_URL}/auth/dipendente", json={
             "creatore_id": creatore_id, "nome": nome, "cognome": cognome,

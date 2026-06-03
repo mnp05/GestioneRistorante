@@ -63,6 +63,41 @@ def get_all_employees():
 def get_all_clients():
     return jsonify({"status": "success", "data": auth_ctrl.handle_get_all_clients()}), 200
 
+@app.route('/api/auth/clienti/<cliente_id>', methods=['DELETE'])
+def delete_client(cliente_id):
+    data = request.json
+    password = data.get("password", "") if data else ""
+    try:
+        success = auth_ctrl.handle_remove_client(cliente_id, password)
+        if success:
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Impossibile eliminare l'account"}), 400
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route('/api/auth/password/<user_id>', methods=['PUT'])
+def change_password(user_id):
+    data = request.json
+    old_pw = data.get("old_password", "") if data else ""
+    new_pw = data.get("new_password", "") if data else ""
+    try:
+        success = auth_ctrl.handle_change_password(user_id, old_pw, new_pw)
+        if success:
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Impossibile aggiornare la password"}), 400
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
+
+@app.route('/api/auth/recover', methods=['POST'])
+def recover_password():
+    data = request.json
+    email = data.get("email", "") if data else ""
+    try:
+        pw = auth_ctrl.handle_recover_password(email)
+        return jsonify({"status": "success", "password": pw}), 200
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 404
+
 @app.route('/api/auth/dipendente/<dipendente_id>', methods=['PUT'])
 def update_dipendente(dipendente_id):
     data = request.json

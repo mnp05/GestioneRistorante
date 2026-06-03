@@ -70,6 +70,17 @@ class AuthController:
             
         return self.user_repo.delete(dipendente_id)
 
+    def handle_remove_client(self, cliente_id: str, password: str) -> bool:
+        cliente = self.user_repo.get_by_id(cliente_id)
+        if not cliente or cliente.get("ruolo") != "Cliente":
+            raise ValueError("Account cliente non trovato.")
+            
+        # Verifica banale della password (in produzione usare hashing come bcrypt)
+        if str(cliente.get("password", "")) != password:
+            raise ValueError("Password errata. Impossibile cancellare l'account.")
+            
+        return self.user_repo.delete(cliente_id)
+
     def handle_modify_access_level(self, creatore_id: str, dipendente_id: str, nuovo_livello: str) -> bool:
         creatore = self.user_repo.get_by_id(creatore_id)
         if not creatore or creatore.get("ruolo") != "Gestore":
@@ -85,3 +96,20 @@ class AuthController:
         # Il logout viene gestito lato client svuotando la sessione corrente.
         # Lato server non è necessaria alcuna azione persistente.
         pass
+
+    def handle_change_password(self, user_id: str, old_pw: str, new_pw: str) -> bool:
+        user = self.user_repo.get_by_id(user_id)
+        if not user:
+            raise ValueError("Utente non trovato.")
+            
+        if str(user.get("password", "")) != old_pw:
+            raise ValueError("Vecchia password errata.")
+            
+        return self.user_repo.update(user_id, {"password": new_pw})
+
+    def handle_recover_password(self, email: str) -> str:
+        utenti = self.user_repo.get_all()
+        for u in utenti:
+            if u.get("email") == email:
+                return str(u.get("password", ""))
+        raise ValueError("Nessun account associato a questa email.")

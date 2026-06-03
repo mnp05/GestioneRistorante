@@ -22,6 +22,17 @@ class StaffDashboardWidget(QWidget):
         top_layout.addWidget(titolo)
         top_layout.addStretch()
 
+        btn_modifica_password = QPushButton("Modifica Password")
+        btn_modifica_password.setStyleSheet("""
+            QPushButton {
+                background-color: #2196F3; color: white;
+                border-radius: 5px; padding: 6px 16px; font-weight: bold;
+            }
+            QPushButton:hover { background-color: #42A5F5; }
+        """)
+        btn_modifica_password.clicked.connect(self.modifica_password)
+        top_layout.addWidget(btn_modifica_password)
+
         btn_refresh = QPushButton("Aggiorna")
         btn_refresh.setStyleSheet("""
             QPushButton {
@@ -227,3 +238,18 @@ class StaffDashboardWidget(QWidget):
                     self.load_data()
             except Exception as e:
                 QMessageBox.warning(self, "Errore", str(e))
+
+    def modifica_password(self):
+        from PyQt5.QtWidgets import QInputDialog, QLineEdit
+        old_pw, ok = QInputDialog.getText(self, "Modifica Password", "Inserisci la tua VECCHIA password:", QLineEdit.Password) # type: ignore
+        if not ok or not old_pw: return
+        
+        new_pw, ok2 = QInputDialog.getText(self, "Modifica Password", "Inserisci la NUOVA password:", QLineEdit.Password) # type: ignore
+        if not ok2 or not new_pw: return
+        
+        try:
+            success = StaffAPIClient.cambia_password(self.user_data.get("id"), old_pw, new_pw)
+            if success:
+                QMessageBox.information(self, "Successo", "Password aggiornata correttamente.")
+        except Exception as e:
+            QMessageBox.warning(self, "Errore", str(e))

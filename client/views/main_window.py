@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
             self.tab_buttons.append(btn)
 
         # Tab 1: Dashboard
-        self.dashboard_tab = DashboardWidget(self.user_data)
+        self.dashboard_tab = DashboardWidget(self.user_data, self.logout_callback)
         add_custom_tab(self.dashboard_tab, "Dashboard")
 
         # Tab 2: Menù

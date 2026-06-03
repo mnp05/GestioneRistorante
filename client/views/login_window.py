@@ -81,6 +81,12 @@ class LoginWindow(QWidget):
         
         layout.addLayout(btn_layout)
 
+        btn_recupera_password = QPushButton("Password dimenticata?")
+        btn_recupera_password.setStyleSheet("color: #8C1515; text-decoration: underline; background: transparent; border: none;")
+        btn_recupera_password.setCursor(Qt.PointingHandCursor) # type: ignore
+        btn_recupera_password.clicked.connect(self.handle_recupera_password)
+        layout.addWidget(btn_recupera_password, alignment=Qt.AlignCenter) # type: ignore
+
         note = QLabel("NOTA: Registrati per accumulare punti fedeltà ed utilizzare i Buoni Regalo!")
         note.setAlignment(Qt.AlignCenter)  # type: ignore
         note.setStyleSheet("color: gray; font-style: italic; border: 1px solid gray; padding: 10px;")
@@ -161,6 +167,17 @@ class LoginWindow(QWidget):
             self.main_app_callback(user_data)
         except Exception as e:
             QMessageBox.critical(self, "Errore Accesso", str(e))
+
+    def handle_recupera_password(self):
+        from PyQt5.QtWidgets import QInputDialog
+        email, ok = QInputDialog.getText(self, "Recupero Password", "Inserisci l'indirizzo email associato al tuo account:")
+        if ok and email.strip():
+            try:
+                pw = APIClient.recupera_password(email.strip())
+                msg = f"📩 DA: noreply@ristorante.it\nA: {email.strip()}\n\nAbbiamo ricevuto una richiesta di recupero per le tue credenziali.\nLa tua password attuale è: {pw}\n\nPer motivi di sicurezza ti consigliamo di modificarla al prossimo accesso."
+                QMessageBox.information(self, "E-mail Ricevuta (Simulazione)", msg)
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
 
     def handle_register(self):
         nome = self.reg_nome.text().strip()

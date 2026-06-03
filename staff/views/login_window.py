@@ -69,6 +69,12 @@ class StaffLoginWindow(QWidget):
         self.btn_accedi.clicked.connect(self.handle_login)
         layout.addWidget(self.btn_accedi, alignment=Qt.AlignCenter) # type: ignore
 
+        btn_recupera_password = QPushButton("Password dimenticata?")
+        btn_recupera_password.setStyleSheet("color: #8C1515; text-decoration: underline; background: transparent; border: none;")
+        btn_recupera_password.setCursor(Qt.PointingHandCursor) # type: ignore
+        btn_recupera_password.clicked.connect(self.handle_recupera_password)
+        layout.addWidget(btn_recupera_password, alignment=Qt.AlignCenter) # type: ignore
+
         layout.addStretch()
         self.setLayout(layout)
 
@@ -83,3 +89,14 @@ class StaffLoginWindow(QWidget):
             self.on_login_callback(user_data)
         except Exception as e:
             QMessageBox.critical(self, "Errore Accesso", str(e))
+
+    def handle_recupera_password(self):
+        from PyQt5.QtWidgets import QInputDialog
+        email, ok = QInputDialog.getText(self, "Recupero Password Staff", "Inserisci la tua email lavorativa:")
+        if ok and email.strip():
+            try:
+                pw = StaffAPIClient.recupera_password(email.strip())
+                msg = f"📩 DA: noreply-staff@ristorante.it\nA: {email.strip()}\n\nRichiesta di recupero credenziali DIPENDENTE/GESTORE.\nLa tua password di accesso è: {pw}\n\nNon inoltrare mai questa email."
+                QMessageBox.information(self, "E-mail Ricevuta (Simulazione)", msg)
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))

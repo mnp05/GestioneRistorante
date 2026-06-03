@@ -23,6 +23,32 @@ class APIClient:
         raise ValueError(res.json().get("message", "Errore di registrazione"))
 
     @classmethod
+    def cancella_account(cls, cliente_id, password):
+        res = requests.delete(f"{cls.BASE_URL}/auth/clienti/{cliente_id}", json={
+            "password": password
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore durante l'eliminazione dell'account"))
+
+    @classmethod
+    def cambia_password(cls, user_id, old_pw, new_pw):
+        res = requests.put(f"{cls.BASE_URL}/auth/password/{user_id}", json={
+            "old_password": old_pw,
+            "new_password": new_pw
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore durante il cambio password"))
+
+    @classmethod
+    def recupera_password(cls, email):
+        res = requests.post(f"{cls.BASE_URL}/auth/recover", json={"email": email})
+        if res.status_code == 200:
+            return res.json().get("password")
+        raise ValueError(res.json().get("message", "Impossibile recuperare la password"))
+
+    @classmethod
     def get_menu(cls):
         res = requests.get(f"{cls.BASE_URL}/menu")
         if res.status_code == 200:

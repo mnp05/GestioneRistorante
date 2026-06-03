@@ -3,9 +3,10 @@ from PyQt5.QtCore import Qt
 from client.api_client import APIClient
 
 class DashboardWidget(QWidget):
-    def __init__(self, user_data):
+    def __init__(self, user_data, logout_callback=None):
         super().__init__()
         self.user_data = user_data
+        self.logout_callback = logout_callback
         self.init_ui()
 
     def init_ui(self):
@@ -79,4 +80,82 @@ class DashboardWidget(QWidget):
         layout.addWidget(nota)
 
         layout.addStretch()
+        
+        # Zona Cancella Account
+        danger_zone = QHBoxLayout()
+        danger_zone.addStretch()
+        
+        btn_modifica_password = QPushButton("Modifica Password")
+        btn_modifica_password.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                color: #2196F3;
+                border: 1px solid #2196F3;
+                border-radius: 5px;
+                padding: 6px 15px;
+                font-weight: bold;
+            }
+            QPushButton:hover { background-color: #E3F2FD; }
+        """)
+        btn_modifica_password.clicked.connect(self.modifica_password)
+        danger_zone.addWidget(btn_modifica_password)
+        
+        danger_zone.addSpacing(10)
+        
+        btn_cancella_account = QPushButton("Elimina Account")
+        btn_cancella_account.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                color: #D45B5B;
+                border: 1px solid #D45B5B;
+                border-radius: 5px;
+                padding: 6px 15px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #FFF0F0;
+            }
+        """)
+        btn_cancella_account.clicked.connect(self.conferma_cancella_account)
+        danger_zone.addWidget(btn_cancella_account)
+        
+        layout.addLayout(danger_zone)
+
         self.setLayout(layout)
+
+    def conferma_cancella_account(self):
+        from PyQt5.QtWidgets import QInputDialog, QLineEdit
+        password, ok = QInputDialog.getText(
+            self, "Conferma Cancellazione",
+            "Attenzione! L'eliminazione dell'account è irreversibile e perderai tutti i punti fedeltà.\n\nPer confermare, inserisci la tua password:",
+            QLineEdit.Password # type: ignore
+        )
+
+        if ok:
+            if not password:
+                QMessageBox.warning(self, "Errore", "Devi inserire la password per procedere.")
+                return
+                
+            try:
+                success = APIClient.cancella_account(self.user_data.get("id"), password)
+                if success:
+                    QMessageBox.information(self, "Addio", "Account eliminato con successo. Speriamo di rivederti!")
+                    if self.logout_callback:
+                        self.logout_callback()
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
+
+    def modifica_password(self):
+        from PyQt5.QtWidgets import QInputDialog, QLineEdit
+        old_pw, ok = QInputDialog.getText(self, "Modifica Password", "Inserisci la tua VECCHIA password:", QLineEdit.Password) # type: ignore
+        if not ok or not old_pw: return
+        
+        new_pw, ok2 = QInputDialog.getText(self, "Modifica Password", "Inserisci la NUOVA password:", QLineEdit.Password) # type: ignore
+        if not ok2 or not new_pw: return
+        
+        try:
+            success = APIClient.cambia_password(self.user_data.get("id"), old_pw, new_pw)
+            if success:
+                QMessageBox.information(self, "Successo", "Password aggiornata correttamente.")
+        except Exception as e:
+            QMessageBox.warning(self, "Errore", str(e))
