@@ -68,13 +68,19 @@ class StaffAPIClient:
         raise ValueError("Errore salvataggio tavolo")
 
     @classmethod
-    def elimina_tavolo(cls, numero):
-        res = requests.delete(f"{cls.BASE_URL}/tables/{numero}")
+    def elimina_tavolo(cls, numero, data=None):
+        params = {}
+        if data:
+            params["data"] = data
+        res = requests.delete(f"{cls.BASE_URL}/tables/{numero}", params=params)
         return res.status_code == 200
 
     @classmethod
-    def aggiorna_stato_tavolo(cls, numero, stato):
-        res = requests.put(f"{cls.BASE_URL}/tables/{numero}", json={"stato": stato})
+    def aggiorna_stato_tavolo(cls, numero, stato, data=None):
+        payload = {"stato": stato}
+        if data:
+            payload["data"] = data
+        res = requests.put(f"{cls.BASE_URL}/tables/{numero}", json=payload)
         return res.status_code == 200
 
     # --- PRENOTAZIONI ---
@@ -171,6 +177,11 @@ class StaffAPIClient:
         if res.status_code == 201:
             return res.json().get("data")
         raise ValueError("Errore nell'aggiunta dell'ingrediente")
+
+    @classmethod
+    def modifica_ingrediente(cls, item_id, dati):
+        res = requests.put(f"{cls.BASE_URL}/inventory/{item_id}/full", json=dati)
+        return res.status_code == 200
 
     @classmethod
     def aggiorna_scorte(cls, item_id, quantita):

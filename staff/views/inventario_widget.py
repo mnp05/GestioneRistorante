@@ -96,6 +96,16 @@ class InventarioWidget(QWidget):
         """)
         btn_scorte.clicked.connect(self.aggiorna_scorte)
 
+        btn_modifica = QPushButton("Modifica Ingrediente")
+        btn_modifica.setStyleSheet("""
+            QPushButton {
+                background-color: #2196F3; color: white;
+                border-radius: 10px; padding: 8px 16px; font-weight: bold;
+            }
+            QPushButton:hover { background-color: #42A5F5; }
+        """)
+        btn_modifica.clicked.connect(self.modifica_ingrediente)
+
         btn_elimina = QPushButton("Rimuovi Ingrediente")
         btn_elimina.setStyleSheet("""
             QPushButton {
@@ -108,6 +118,7 @@ class InventarioWidget(QWidget):
 
         btn_layout.addStretch()
         btn_layout.addWidget(btn_aggiungi)
+        btn_layout.addWidget(btn_modifica)
         btn_layout.addWidget(btn_scorte)
         btn_layout.addWidget(btn_elimina)
         btn_layout.addStretch()
@@ -228,6 +239,56 @@ class InventarioWidget(QWidget):
                 StaffAPIClient.aggiungi_ingrediente(dati)
                 QMessageBox.information(self, "Successo", "Ingrediente aggiunto.")
                 self.load_data()
+            except Exception as e:
+                QMessageBox.warning(self, "Errore", str(e))
+
+    def modifica_ingrediente(self):
+        row = self.table.currentRow()
+        if row < 0:
+            QMessageBox.warning(self, "Attenzione", "Seleziona un ingrediente dalla tabella.")
+            return
+
+        id_item = self.table.item(row, 0).text() # type: ignore
+        item = next((i for i in self.inventario_data if str(i["id"]) == id_item), None)
+        if not item: return
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Modifica Ingrediente")
+        form = QFormLayout()
+        
+        campi = {}
+        
+        for campo, label in [("nome", "Nome:"), ("descrizione", "Descrizione:"),
+                              ("quantita_disponibile", "Quantità:"), ("unita_misura", "Unità di misura:"),
+                              ("soglia_minima", "Soglia minima:")]:
+            input_field = QLineEdit()
+            input_field.setText(str(item.get(campo, "")))
+            campi[campo] = input_field
+            form.addRow(label, input_field)
+            
+        combo_categoria = QComboBox()
+        combo_categoria.setEditable(True)
+        combo_categoria.addItems(self.categorie_disponibili)
+        combo_categoria.setCurrentText(str(item.get("categoria_id", "")))
+        form.addRow("Categoria:", combo_categoria)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)  # type: ignore
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        form.addRow(buttons)
+        dialog.setLayout(form)
+
+        if dialog.exec_() == QDialog.Accepted:
+            dati = {campo: input_field.text() for campo, input_field in campi.items()}
+            dati["categoria_id"] = combo_categoria.currentText().strip()
+            
+            try:
+                success = StaffAPIClient.modifica_ingrediente(id_item, dati)
+                if success:
+                    QMessageBox.information(self, "Successo", "Ingrediente modificato.")
+                    self.load_data()
+                else:
+                    QMessageBox.warning(self, "Errore", "Impossibile modificare l'ingrediente.")
             except Exception as e:
                 QMessageBox.warning(self, "Errore", str(e))
 

@@ -56,28 +56,47 @@ class StaffMainWindow(QMainWindow):
 
         main_layout.addWidget(header)
 
-        self.tabs = QTabWidget()
-        self.tabs.tabBar().setExpanding(True)
-        self.tabs.setStyleSheet("""
-            QTabWidget::pane { border: 0; }
-            QTabBar::tab {
-                background-color: #C04A4A;
-                color: white;
-                height: 40px;
-                font-weight: bold;
-            }
-            QTabBar::tab:selected {
-                background-color: #E8A38B;
-            }
-        """)
+        from PyQt5.QtWidgets import QStackedWidget, QSizePolicy
+        # Custom Tabs using QStackedWidget + Buttons
+        self.tab_bar_widget = QWidget()
+        self.tab_bar_widget.setStyleSheet("background-color: #C04A4A;")
+        tab_layout = QHBoxLayout(self.tab_bar_widget)
+        tab_layout.setContentsMargins(0, 0, 0, 0)
+        tab_layout.setSpacing(0)
 
-        self.tabs.addTab(TavoliWidget(), "Tavoli")
-        self.tabs.addTab(PrenotazioniWidget(), "Prenotazioni")
-        self.tabs.addTab(StaffMenuWidget(), "Menù")
-        self.tabs.addTab(InventarioWidget(), "Inventario")
-        self.tabs.addTab(StaffDashboardWidget(self.user_data), "Bacheca")
+        self.stacked_widget = QStackedWidget()
+        
+        main_layout.addWidget(self.tab_bar_widget)
+        main_layout.addWidget(self.stacked_widget)
+        
+        self.tab_buttons = []
+        
+        def switch_tab(index):
+            self.stacked_widget.setCurrentIndex(index)
+            for i, btn in enumerate(self.tab_buttons):
+                if i == index:
+                    btn.setStyleSheet("background-color: #E8A38B; color: white; border: none; height: 40px; font-weight: bold; font-size: 14px;")
+                else:
+                    btn.setStyleSheet("background-color: transparent; color: white; border: none; height: 40px; font-weight: bold; font-size: 14px;")
+
+        def add_custom_tab(widget, title):
+            btn = QPushButton(title)
+            btn.setCursor(Qt.PointingHandCursor) # type: ignore
+            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed) # type: ignore
+            tab_layout.addWidget(btn)
+            self.stacked_widget.addWidget(widget)
+            idx = self.stacked_widget.count() - 1
+            btn.clicked.connect(lambda _, i=idx: switch_tab(i))
+            self.tab_buttons.append(btn)
+
+        add_custom_tab(TavoliWidget(), "Tavoli")
+        add_custom_tab(PrenotazioniWidget(), "Prenotazioni")
+        add_custom_tab(StaffMenuWidget(), "Menù")
+        add_custom_tab(InventarioWidget(), "Inventario")
+        add_custom_tab(StaffDashboardWidget(self.user_data), "Bacheca")
 
         if self.user_data.get("ruolo") == "Gestore":
-            self.tabs.addTab(DipendentiWidget(self.user_data), "Dipendenti")
-
-        main_layout.addWidget(self.tabs)
+            add_custom_tab(DipendentiWidget(self.user_data), "Dipendenti")
+            
+        if self.tab_buttons:
+            switch_tab(0)

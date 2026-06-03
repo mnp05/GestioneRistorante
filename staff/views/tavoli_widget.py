@@ -1,3 +1,4 @@
+from typing import Optional
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
                              QPushButton, QLabel, QMessageBox, QDialog, QFormLayout, 
                              QLineEdit, QSpinBox, QComboBox)
@@ -111,8 +112,14 @@ class TavoliWidget(QWidget):
         
         toolbar_layout.addStretch()
 
-        from PyQt5.QtWidgets import QDateEdit
+        from PyQt5.QtWidgets import QDateEdit, QCheckBox
         from PyQt5.QtCore import QDate
+        
+        self.chk_base = QCheckBox("Modifica Planimetria Base")
+        self.chk_base.setStyleSheet("font-weight: bold; color: #8C1515;")
+        self.chk_base.toggled.connect(self.load_data)
+        toolbar_layout.addWidget(self.chk_base)
+        
         toolbar_layout.addWidget(QLabel("Data:"))
         self.date_picker = QDateEdit()
         self.date_picker.setCalendarPopup(True)
@@ -150,45 +157,88 @@ class TavoliWidget(QWidget):
         layout.addStretch()
         self.setLayout(layout)
 
+    def check_sovrapposizione(self, x: int, y: int, numero_escluso: Optional[str] = None) -> bool:
+        for t in self.tavoli_data:
+            if str(t.get("numero")) != str(numero_escluso):
+                tx = int(t.get("coord_x", 0))
+                ty = int(t.get("coord_y", 0))
+                if tx == x and ty == y:
+                    return True
+        return False
+
     def load_data(self):
+        self.date_picker.setEnabled(not self.chk_base.isChecked())
         for btn in self.bottoni_tavoli.values():
             btn.setParent(None)
         self.bottoni_tavoli.clear()
 
         try:
-            data_str = self.date_picker.date().toString("yyyy-MM-dd")
+            if self.chk_base.isChecked():
+                data_str = "DEFAULT"
+            else:
+                data_str = self.date_picker.date().toString("yyyy-MM-dd")
             self.tavoli_data = StaffAPIClient.get_tavoli(data_str)
         except Exception as e:
             QMessageBox.warning(self, "Errore", f"Impossibile caricare i tavoli:\n{e}")
             return
 
-        for tavolo in self.tavoli_data:
-            numero = tavolo.get("numero", "?")
-            capienza = tavolo.get("capienza", "?")
-            stato = tavolo.get("stato", "DISPONIBILE")
-            x = int(tavolo.get("coord_x", 0))
-            y = int(tavolo.get("coord_y", 0))
-            colore = COLORI_STATO.get(stato, "#607D8B")
+        max_x = max([int(t.get("coord_x", 0)) for t in self.tavoli_data] + [3])
+        max_y = max([int(t.get("coord_y", 0)) for t in self.tavoli_data] + [3])
 
-            btn = QPushButton(f"T{numero}\n{capienza} posti\n{stato}")
-            btn.setFixedSize(130, 90)
-            btn.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: {colore}; color: white;
-                    border-radius: 10px; font-weight: bold; font-size: 12px;
-                }}
-                QPushButton:hover {{ opacity: 0.8; border: 2px solid #333; }}
-            """)
-            btn.clicked.connect(lambda checked, t=tavolo: self.modifica_tavolo(t))
-            self.grid_layout.addWidget(btn, y, x)
-            self.bottoni_tavoli[numero] = btn
+        mappa_tavoli = {}
+        for t in self.tavoli_data:
+            tx = int(t.get("coord_x", 0))
+            ty = int(t.get("coord_y", 0))
+            mappa_tavoli[(tx, ty)] = t
+
+        for y in range(max_y + 1):
+            for x in range(max_x + 1):
+                tavolo = mappa_tavoli.get((x, y))
+                if tavolo:
+                    numero = tavolo.get("numero", "?")
+                    capienza = tavolo.get("capienza", "?")
+                    stato = tavolo.get("stato", "DISPONIBILE")
+                    colore = COLORI_STATO.get(stato, "#607D8B")
+
+                    btn = QPushButton(f"T{numero}\n{capienza} posti\n{stato}")
+                    btn.setFixedSize(130, 90)
+                    btn.setStyleSheet(f"""
+                        QPushButton {{
+                            background-color: {colore}; color: white;
+                            border-radius: 10px; font-weight: bold; font-size: 12px;
+                        }}
+                        QPushButton:hover {{ opacity: 0.8; border: 2px solid #333; }}
+                    """)
+                    btn.clicked.connect(lambda checked, t=tavolo: self.modifica_tavolo(t))
+                    self.grid_layout.addWidget(btn, y, x)
+                    self.bottoni_tavoli[f"t_{numero}"] = btn
+                else:
+                    lbl = QLabel()
+                    lbl.setFixedSize(130, 90)
+                    lbl.setStyleSheet("""
+                        QLabel {
+                            border: 2px dashed #cccccc; 
+                            border-radius: 10px; 
+                            background-color: #fafafa;
+                        }
+                    """)
+                    self.grid_layout.addWidget(lbl, y, x)
+                    self.bottoni_tavoli[f"empty_{x}_{y}"] = lbl
 
     def aggiungi_tavolo(self):
         dialog = TavoloDialog(self)
         if dialog.exec_() == QDialog.Accepted:
             dati = dialog.get_data()
+            if self.chk_base.isChecked():
+                dati["data"] = "DEFAULT"
+            else:
+                dati["data"] = self.date_picker.date().toString("yyyy-MM-dd")
+                
             if not dati["numero"]:
                 QMessageBox.warning(self, "Errore", "Il numero del tavolo è obbligatorio.")
+                return
+            if self.check_sovrapposizione(dati["coord_x"], dati["coord_y"]):
+                QMessageBox.warning(self, "Errore", "La posizione (X, Y) è già occupata da un altro tavolo.")
                 return
             try:
                 StaffAPIClient.salva_tavolo(dati)
@@ -199,14 +249,23 @@ class TavoliWidget(QWidget):
     def modifica_tavolo(self, tavolo_data):
         dialog = TavoloDialog(self, tavolo_data)
         if dialog.exec_() == QDialog.Accepted:
+            if self.chk_base.isChecked():
+                target_date = "DEFAULT"
+            else:
+                target_date = self.date_picker.date().toString("yyyy-MM-dd")
+                
             if getattr(dialog, 'vuole_eliminare', False):
                 try:
-                    StaffAPIClient.elimina_tavolo(tavolo_data["numero"])
+                    StaffAPIClient.elimina_tavolo(tavolo_data["numero"], data=target_date)
                     self.load_data()
                 except Exception as e:
                     QMessageBox.warning(self, "Errore", str(e))
             else:
                 dati = dialog.get_data()
+                dati["data"] = target_date
+                if self.check_sovrapposizione(dati["coord_x"], dati["coord_y"], dati["numero"]):
+                    QMessageBox.warning(self, "Errore", "La posizione (X, Y) è già occupata da un altro tavolo.")
+                    return
                 try:
                     StaffAPIClient.salva_tavolo(dati)
                     self.load_data()

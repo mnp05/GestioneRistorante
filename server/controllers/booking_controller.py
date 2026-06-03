@@ -97,7 +97,8 @@ class BookingController:
         return self.booking_repo.update(booking_id, {"stato": "DISDETTA", "id_tavolo": ""})
         
     def get_tavoli(self, data_filtro: Optional[str] = None) -> list[dict]:
-        tavoli = self.table_repo.get_all()
+        target_date = data_filtro if data_filtro else "DEFAULT"
+        tavoli = self.table_repo.get_for_date(target_date)
         
         if data_filtro:
             prenotazioni_del_giorno = self.get_all_bookings(data_filtro)
@@ -114,11 +115,11 @@ class BookingController:
                     
         return tavoli
         
-    def aggiorna_stato_tavolo(self, numero_tavolo: str, nuovo_stato: str) -> bool:
-        return self.table_repo.update_stato(numero_tavolo, nuovo_stato)
+    def aggiorna_stato_tavolo(self, numero_tavolo: str, nuovo_stato: str, target_date: str = "DEFAULT") -> bool:
+        return self.table_repo.update_stato(numero_tavolo, nuovo_stato, target_date)
 
     def salva_tavolo(self, dati: dict) -> dict:
         return self.table_repo.create_or_update(dati)
 
-    def rimuovi_tavolo(self, numero: str) -> bool:
-        return self.table_repo.delete(numero)
+    def rimuovi_tavolo(self, numero: str, target_date: str = "DEFAULT") -> bool:
+        return self.table_repo.delete(numero, target_date)

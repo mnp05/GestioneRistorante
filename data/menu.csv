@@ -1,6 +1,30 @@
 id,nome,descrizione,prezzo,allergeni,categoria_id,foto_path,attivo
-1,Spaghetti alla Carbonara,"Pasta con uova, guanciale, pecorino e pepe",12.5,"Glutine, Uova",1,,True
-2,Bistecca alla Fiorentina,Taglio di carne chianina cotto al sangue,25.0,,2,,True
-3,Tiramisù,Savoiardi inzuppati nel caffè con crema al mascarpone,6.0,"Glutine, Uova, Lattosio",3,,True
-4,Acqua Minerale,Bottiglia da 75cl,2.0,,4,,True
-5,Pasta al Pesto,,10,Basilico,1,,True
+1,Spaghetti alla Carbonara,"Pasta con uova, guanciale, pecorino e pepe",12.5,"Glutine, Uova, Lattosio",2,,True
+2,Bistecca alla Fiorentina,Taglio di carne chianina cotto al sangue (prezzo all'etto),5.5/etto,,3,,True
+3,Tiramisù,Savoiardi inzuppati nel caffè con crema al mascarpone,6.0,"Glutine, Uova, Lattosio",4,,True
+4,Acqua Minerale Naturale,Bottiglia in vetro da 75cl,2.0,,5,,True
+5,Pasta al Pesto,"Pasta fresca con basilico, pinoli e parmigiano",10.0,"Glutine, Lattosio, Frutta a guscio",2,,True
+6,Bruschetta al Pomodoro,Pane tostato con pomodorini freschi e basilico,5.0,Glutine,1,,True
+7,Tagliere di Salumi e Formaggi,Selezione di affettati e formaggi locali con miele,14.0,Lattosio,1,,True
+8,Tartare di Manzo,Carne cruda tritata al coltello con senape e capperi,16.0,Senape,1,,True
+9,Fiori di Zucca Fritti,Fiori di zucca in pastella ripieni di ricotta,8.0,"Glutine, Lattosio",1,,True
+10,Carpaccio di Salmone,Fettine di salmone affumicato con rucola e limone,12.0,Pesce,1,,True
+11,Risotto ai Funghi Porcini,Riso carnaroli con porcini freschi mantecato al burro,14.0,Lattosio,2,,True
+12,Lasagne alla Bolognese,Sfoglia all'uovo con ragù di carne e besciamella,12.0,"Glutine, Uova, Lattosio",2,,True
+13,Gnocchi alla Sorrentina,Gnocchi di patate cotti al forno con pomodoro e mozzarella,11.0,"Glutine, Lattosio",2,,True
+14,Paccheri allo Scoglio,"Pasta con cozze, vongole, calamari e gamberi",16.0,"Glutine, Pesce, Crostacei, Molluschi",2,,True
+15,Filetto di Branzino al Forno,Pesce fresco cotto al forno con patate e olive,18.0,Pesce,3,,True
+16,Pollo Arrosto con Patate,Cosce e sovracosce di pollo ruspante con patate rustiche,13.0,,3,,True
+17,Cotoletta alla Milanese,Lombata di vitello impanata e fritta nel burro,15.0,"Glutine, Uova, Lattosio",3,,True
+18,Scaloppine al Limone,Fettine di vitello sfumate al limone,12.0,"Glutine, Lattosio",3,,True
+19,Tagliata Rucola e Grana,Tagliata di manzo servita con scaglie di grana,18.0,Lattosio,3,,True
+20,Panna Cotta ai Frutti di Bosco,Panna fresca con coulis di frutti rossi,5.0,Lattosio,4,,True
+21,Cheesecake alle Fragole,Torta fredda al formaggio con base di biscotto,6.0,"Glutine, Lattosio",4,,True
+22,Cannolo Siciliano,Scorza croccante ripiena di ricotta di pecora e gocce di cioccolato,4.5,"Glutine, Lattosio",4,,True
+23,Sorbetto al Limone,Sorbetto fresco e digestivo,4.0,,4,,True
+24,Acqua Minerale Frizzante,Bottiglia in vetro da 75cl,2.0,,5,,True
+25,Coca Cola,Lattina da 33cl,3.0,,5,,True
+26,Birra Artigianale Bionda,Birra alla spina da 50cl,5.0,Glutine,5,,True
+27,Calice di Vino Rosso,Chianti Classico DOCG,6.0,,5,,True
+28,Calice di Vino Bianco,Gewürztraminer DOC,6.0,,5,,True
+29,Caffè Espresso,Caffè 100% Arabica,1.5,,5,,True

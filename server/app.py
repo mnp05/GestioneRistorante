@@ -131,7 +131,8 @@ def get_tables():
 @app.route('/api/tables/<numero>', methods=['PUT'])
 def update_table_status(numero):
     data = request.json
-    success = booking_ctrl.aggiorna_stato_tavolo(numero, data.get("stato"))
+    target_date = data.get("data", "DEFAULT")
+    success = booking_ctrl.aggiorna_stato_tavolo(numero, data.get("stato"), target_date)
     if success:
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Tavolo non trovato"}), 404
@@ -148,8 +149,9 @@ def add_or_update_table():
 
 @app.route('/api/tables/<numero>', methods=['DELETE'])
 def delete_table(numero):
+    target_date = request.args.get('data', 'DEFAULT')
     try:
-        success = booking_ctrl.rimuovi_tavolo(numero)
+        success = booking_ctrl.rimuovi_tavolo(numero, target_date)
         if success:
             return jsonify({"status": "success"}), 200
         return jsonify({"status": "error", "message": "Tavolo non trovato"}), 404
@@ -231,6 +233,14 @@ def add_inventory_item():
 def update_inventory(item_id):
     data = request.json
     success = inv_ctrl.aggiorna_scorte(item_id, float(data.get("quantita_disponibile")))
+    if success:
+        return jsonify({"status": "success"}), 200
+    return jsonify({"status": "error", "message": "Ingrediente non trovato"}), 404
+
+@app.route('/api/inventory/<item_id>/full', methods=['PUT'])
+def update_inventory_full(item_id):
+    data = request.json
+    success = inv_ctrl.modifica_ingrediente(item_id, data)
     if success:
         return jsonify({"status": "success"}), 200
     return jsonify({"status": "error", "message": "Ingrediente non trovato"}), 404
