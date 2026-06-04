@@ -16,7 +16,7 @@ class CSVRepository:
     def read(self) -> pd.DataFrame:
         if not self.path.exists():
             return pd.DataFrame(columns=self.columns)
-        df = pd.read_csv(self.path, dtype=str).fillna("")
+        df = pd.read_csv(self.path, dtype=object).fillna("")
         for column in self.columns:
             if column not in df.columns:
                 df[column] = ""
