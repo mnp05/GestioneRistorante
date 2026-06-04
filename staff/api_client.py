@@ -89,7 +89,11 @@ class StaffAPIClient:
         res = requests.post(f"{cls.BASE_URL}/tables", json=dati)
         if res.status_code == 200:
             return res.json().get("data")
-        raise ValueError("Errore salvataggio tavolo")
+        try:
+            msg = res.json().get("message", "Errore salvataggio tavolo")
+        except:
+            msg = f"Errore server {res.status_code}"
+        raise ValueError(msg)
 
     @classmethod
     def elimina_tavolo(cls, numero, data=None):
@@ -100,12 +104,18 @@ class StaffAPIClient:
         return res.status_code == 200
 
     @classmethod
-    def aggiorna_stato_tavolo(cls, numero, stato, data=None):
+    def aggiorna_stato_tavolo(cls, numero, stato, target_date=None):
         payload = {"stato": stato}
-        if data:
-            payload["data"] = data
+        if target_date:
+            payload["data"] = target_date
         res = requests.put(f"{cls.BASE_URL}/tables/{numero}", json=payload)
-        return res.status_code == 200
+        if res.status_code == 200:
+            return True
+        try:
+            msg = res.json().get("message", "Errore aggiornamento tavolo")
+        except:
+            msg = f"Errore server {res.status_code}"
+        raise ValueError(msg)
 
     # --- PRENOTAZIONI ---
 
