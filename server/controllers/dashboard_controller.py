@@ -1,6 +1,6 @@
 from datetime import datetime
-from server.repositories.dashboard_repository import DashboardRepository
-from server.repositories.user_repository import UserRepository
+from server.models.dashboard import DashboardRepository
+from server.models.user import UserRepository
 
 
 class DashboardController:

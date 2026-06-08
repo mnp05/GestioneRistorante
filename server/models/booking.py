@@ -1,21 +1,20 @@
 import pandas as pd
 from typing import Optional
-from server.repositories.base_repository import CSVRepository
+from server.models.base_repository import CSVRepository
 
-class MenuRepository(CSVRepository):
+class BookingRepository(CSVRepository):
     def __init__(self) -> None:
         super().__init__(
-            "menu.csv",
-            ["id", "nome", "descrizione", "prezzo", "allergeni", "categoria_id", "foto_path", "attivo"],
+            "prenotazioni.csv",
+            ["id", "cliente_id", "nome_ospite", "data", "ora", "numero_persone", "allergeni", "note", "tavolo_id", "stato"],
         )
 
     def get_all(self) -> list[dict]:
-        df = self.read()
-        return df.to_dict("records")
+        return self.read().to_dict("records")
 
-    def get_by_id(self, item_id: str) -> Optional[dict]:
+    def get_by_id(self, booking_id: str) -> Optional[dict]:
         df = self.read()
-        mask = df["id"].astype(str) == item_id
+        mask = df["id"].astype(str) == booking_id
         if mask.any():
             return df[mask].iloc[0].to_dict()
         return None
@@ -28,9 +27,9 @@ class MenuRepository(CSVRepository):
         self.write(df)
         return record
 
-    def update(self, item_id: str, data: dict) -> bool:
+    def update(self, booking_id: str, data: dict) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == item_id
+        mask = df["id"].astype(str) == booking_id
         if not mask.any():
             return False
         idx = df[mask].index[0]
@@ -40,9 +39,9 @@ class MenuRepository(CSVRepository):
         self.write(df)
         return True
 
-    def delete(self, item_id: str) -> bool:
+    def delete(self, booking_id: str) -> bool:
         df = self.read()
-        mask = df["id"].astype(str) == item_id
+        mask = df["id"].astype(str) == booking_id
         if not mask.any():
             return False
         df = df[~mask]

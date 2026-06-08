@@ -1,5 +1,5 @@
 from datetime import datetime
-from server.repositories.user_repository import UserRepository
+from server.models.user import UserRepository
 
 
 class AuthController:

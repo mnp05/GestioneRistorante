@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
-from server.repositories.promo_repository import PromoRepository
-from server.repositories.user_repository import UserRepository
+from server.models.promo import PromoRepository
+from server.models.user import UserRepository
 
 
 class PromoController:

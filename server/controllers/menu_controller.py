@@ -1,5 +1,5 @@
-from server.repositories.menu_repository import MenuRepository
-from server.repositories.user_repository import UserRepository
+from server.models.menu import MenuRepository
+from server.models.user import UserRepository
 
 
 class MenuController:

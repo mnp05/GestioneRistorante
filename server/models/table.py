@@ -1,6 +1,6 @@
 import pandas as pd
 from typing import Optional
-from server.repositories.base_repository import CSVRepository
+from server.models.base_repository import CSVRepository
 
 class TableRepository(CSVRepository):
     def __init__(self) -> None:

@@ -1,7 +1,7 @@
 from typing import Optional
-from server.repositories.booking_repository import BookingRepository
-from server.repositories.table_repository import TableRepository
-from server.repositories.user_repository import UserRepository
+from server.models.booking import BookingRepository
+from server.models.table import TableRepository
+from server.models.user import UserRepository
 
 
 class BookingController:

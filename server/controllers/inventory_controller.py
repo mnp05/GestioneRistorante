@@ -1,4 +1,4 @@
-from server.repositories.inventory_repository import InventoryRepository
+from server.models.inventory import InventoryRepository
 
 
 class InventoryController:

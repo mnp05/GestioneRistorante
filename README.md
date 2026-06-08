@@ -16,7 +16,6 @@ Il codice sorgente è organizzato secondo la seguente struttura modulare:
 - `data/`: Contiene i file CSV per la persistenza dei dati (Utenti, Prenotazioni, Tavoli, Menù, Inventario, Buoni Regalo, Transazioni Punti, Bacheca Staff).
 - `server/`: Backend RESTful sviluppato in Flask.
   - `models/`: Classi di dominio entità (Entity).
-  - `repositories/`: Classi di accesso ai dati tramite Pandas (Repository Pattern).
   - `controllers/`: Logica di business applicativa (Controller Pattern).
   - `app.py`: Configurazione delle rotte Flask ed endpoint REST.
 - `client/`: Applicazione PyQt5 dedicata ai Clienti (Visualizzazione menù, prenotazioni, programma punti fedeltà, acquisto e riscatto buoni regalo).
