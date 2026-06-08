@@ -49,7 +49,7 @@ class DipendentiWidget(QWidget):
 
         self.input_password = QLineEdit()
         self.input_password.setStyleSheet("border: 1px solid #CCC; padding: 5px;")
-        self.input_password.setEchoMode(QLineEdit.Password) # type: ignore
+        self.input_password.setEchoMode(QLineEdit.Password) 
         form_layout.addRow("Password:", self.input_password)
 
         self.combo_livello = QComboBox()
@@ -70,9 +70,9 @@ class DipendentiWidget(QWidget):
 
         self.table = QTableWidget(0, 5)
         self.table.setHorizontalHeaderLabels(["ID", "Nome", "Cognome", "Ruolo", "Livello Accesso"])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
-        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) 
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) 
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) 
         right_layout.addWidget(self.table)
 
         btn_layout = QHBoxLayout()
@@ -140,9 +140,9 @@ class DipendentiWidget(QWidget):
             return
 
         row = selected[0].row()
-        dip_id = self.table.item(row, 0).text() # type: ignore
-        nome_completo = f"{self.table.item(row, 1).text()} {self.table.item(row, 2).text()}" # type: ignore
-        ruolo = self.table.item(row, 3).text() # type: ignore
+        dip_id = self.table.item(row, 0).text() 
+        nome_completo = f"{self.table.item(row, 1).text()} {self.table.item(row, 2).text()}" 
+        ruolo = self.table.item(row, 3).text() 
 
         if ruolo == "Gestore":
             QMessageBox.warning(self, "Negato", "Non puoi modificare il livello di un altro Gestore.")
@@ -168,13 +168,13 @@ class DipendentiWidget(QWidget):
             return
 
         row = selected[0].row()
-        dip_id = self.table.item(row, 0).text() # type: ignore
-        nome_completo = f"{self.table.item(row, 1).text()} {self.table.item(row, 2).text()}" # type: ignore
+        dip_id = self.table.item(row, 0).text() 
+        nome_completo = f"{self.table.item(row, 1).text()} {self.table.item(row, 2).text()}" 
 
         risposta = QMessageBox.question(
             self, "Conferma Eliminazione",
             f"Vuoi davvero eliminare l'account di {nome_completo} in modo permanente?",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:

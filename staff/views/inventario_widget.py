@@ -76,9 +76,9 @@ class InventarioWidget(QWidget):
         ])
         header = self.table.horizontalHeader()
         if header:
-            header.setSectionResizeMode(QHeaderView.Stretch)     # type: ignore
-        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers)  # type: ignore
+            header.setSectionResizeMode(QHeaderView.Stretch)     
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) 
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)  
         layout.addWidget(self.table)
 
         btn_layout = QHBoxLayout()
@@ -204,7 +204,7 @@ class InventarioWidget(QWidget):
             
         risposta = QMessageBox.question(self, "Conferma", 
                                         f"Sei sicuro di voler eliminare la categoria '{cat}'? Verrà rimossa da tutti i prodotti.",
-                                        QMessageBox.Yes | QMessageBox.No) # type: ignore
+                                        QMessageBox.Yes | QMessageBox.No) 
         if risposta == QMessageBox.Yes:
             try:
                 StaffAPIClient.elimina_categoria_inventario(cat)
@@ -236,7 +236,7 @@ class InventarioWidget(QWidget):
         combo_categoria.setToolTip("Seleziona o digita una nuova categoria")
         form.addRow("Categoria:", combo_categoria)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)  # type: ignore
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)  
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         form.addRow(buttons)
@@ -259,7 +259,7 @@ class InventarioWidget(QWidget):
             QMessageBox.warning(self, "Attenzione", "Seleziona un ingrediente dalla tabella.")
             return
 
-        id_item = self.table.item(row, 0).text() # type: ignore
+        id_item = self.table.item(row, 0).text() 
         item = next((i for i in self.inventario_data if str(i["id"]) == id_item), None)
         if not item: return
 
@@ -283,7 +283,7 @@ class InventarioWidget(QWidget):
         combo_categoria.setCurrentText(str(item.get("categoria_id", "")))
         form.addRow("Categoria:", combo_categoria)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)  # type: ignore
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)  
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         form.addRow(buttons)
@@ -309,7 +309,7 @@ class InventarioWidget(QWidget):
             QMessageBox.warning(self, "Attenzione", "Seleziona un ingrediente dalla tabella.")
             return
 
-        id_item = self.table.item(row, 0).text() # type: ignore
+        id_item = self.table.item(row, 0).text() 
         item = next((i for i in self.inventario_data if str(i["id"]) == id_item), None)
         if not item: return
 
@@ -337,14 +337,14 @@ class InventarioWidget(QWidget):
             QMessageBox.warning(self, "Attenzione", "Seleziona un ingrediente dalla tabella.")
             return
 
-        id_item = self.table.item(row, 0).text() # type: ignore
+        id_item = self.table.item(row, 0).text() 
         item = next((i for i in self.inventario_data if str(i["id"]) == id_item), None)
         if not item: return
 
         risposta = QMessageBox.question(
             self, "Conferma Eliminazione",
             f"Eliminare l'ingrediente '{item.get('nome')}'?",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:

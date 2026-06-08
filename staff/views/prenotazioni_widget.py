@@ -27,7 +27,7 @@ class PrenotazioneDialog(QDialog):
         nomi_clienti = [f"{c.get('nome', '')} {c.get('cognome', '')}".strip() for c in self.lista_clienti]
         from PyQt5.QtWidgets import QCompleter
         completer = QCompleter(nomi_clienti, self)
-        completer.setCaseSensitivity(Qt.CaseInsensitive) # type: ignore
+        completer.setCaseSensitivity(Qt.CaseInsensitive) 
         self.inp_nome.setCompleter(completer)
         
         self.inp_data = QDateEdit()
@@ -63,7 +63,7 @@ class PrenotazioneDialog(QDialog):
         self.form_layout.addRow("Allergeni:", self.inp_allergeni)
         self.form_layout.addRow("Note:", self.inp_note)
         
-        self.btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) # type: ignore
+        self.btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) 
         self.btns.accepted.connect(self.accept)
         self.btns.rejected.connect(self.reject)
         self.form_layout.addRow(self.btns)
@@ -142,10 +142,10 @@ class PrenotazioniWidget(QWidget):
             "ID", "Cliente", "Data", "Ora", "Persone", "Tavolo", "Stato", "Note"
         ])
         header = self.table.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.ResizeToContents) # type: ignore
-        header.setSectionResizeMode(7, QHeaderView.Stretch) # type: ignore
-        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
+        header.setSectionResizeMode(QHeaderView.ResizeToContents) 
+        header.setSectionResizeMode(7, QHeaderView.Stretch) 
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) 
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) 
         layout.addWidget(self.table)
 
         btn_layout = QHBoxLayout()
@@ -245,7 +245,7 @@ class PrenotazioniWidget(QWidget):
                 
             def _create_centered_item(text):
                 item = QTableWidgetItem(str(text))
-                item.setTextAlignment(Qt.AlignCenter) # type: ignore
+                item.setTextAlignment(Qt.AlignCenter) 
                 return item
 
             self.table.setRowCount(len(self.prenotazioni_data))
@@ -345,7 +345,7 @@ class PrenotazioniWidget(QWidget):
             date_edit.setDate(QDate.currentDate())
         l.addWidget(date_edit)
         
-        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) # type: ignore
+        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) 
         btns.accepted.connect(dialog.accept)
         btns.rejected.connect(dialog.reject)
         l.addWidget(btns)
@@ -373,7 +373,7 @@ class PrenotazioniWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Annullamento",
             f"Annullare la prenotazione #{prenotazione.get('id')}?",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:

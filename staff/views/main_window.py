@@ -81,8 +81,8 @@ class StaffMainWindow(QMainWindow):
 
         def add_custom_tab(widget, title):
             btn = QPushButton(title)
-            btn.setCursor(Qt.PointingHandCursor) # type: ignore
-            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed) # type: ignore
+            btn.setCursor(Qt.PointingHandCursor) 
+            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed) 
             tab_layout.addWidget(btn)
             self.stacked_widget.addWidget(widget)
             idx = self.stacked_widget.count() - 1

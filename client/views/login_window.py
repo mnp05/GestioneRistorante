@@ -35,12 +35,12 @@ class LoginWindow(QWidget):
         layout.setContentsMargins(30, 30, 30, 30)
 
         header = QLabel("Accedi")
-        header.setAlignment(Qt.AlignCenter)  # type: ignore
+        header.setAlignment(Qt.AlignCenter)  
         header.setStyleSheet("background-color: #8C1515; color: white; font-size: 32px; font-weight: bold; padding: 15px;")
         layout.addWidget(header)
 
         logo_placeholder = QLabel("[ LOGO ]")
-        logo_placeholder.setAlignment(Qt.AlignCenter)  # type: ignore
+        logo_placeholder.setAlignment(Qt.AlignCenter)  
         logo_placeholder.setStyleSheet("border: 1px solid black; font-size: 20px; padding: 20px;")
         layout.addWidget(logo_placeholder)
 
@@ -51,7 +51,7 @@ class LoginWindow(QWidget):
         form_layout.addRow("Email:", self.user_input)
         
         self.pass_input = QLineEdit()
-        self.pass_input.setEchoMode(QLineEdit.Password) # type: ignore
+        self.pass_input.setEchoMode(QLineEdit.Password) 
         self.pass_input.setStyleSheet("border: 1px dashed black; padding: 5px;")
         form_layout.addRow("Password:", self.pass_input)
 
@@ -83,12 +83,12 @@ class LoginWindow(QWidget):
 
         btn_recupera_password = QPushButton("Password dimenticata?")
         btn_recupera_password.setStyleSheet("color: #8C1515; text-decoration: underline; background: transparent; border: none;")
-        btn_recupera_password.setCursor(Qt.PointingHandCursor) # type: ignore
+        btn_recupera_password.setCursor(Qt.PointingHandCursor) 
         btn_recupera_password.clicked.connect(self.handle_recupera_password)
-        layout.addWidget(btn_recupera_password, alignment=Qt.AlignCenter) # type: ignore
+        layout.addWidget(btn_recupera_password, alignment=Qt.AlignCenter) 
 
         note = QLabel("NOTA: Registrati per accumulare punti fedeltà ed utilizzare i Buoni Regalo!")
-        note.setAlignment(Qt.AlignCenter)  # type: ignore
+        note.setAlignment(Qt.AlignCenter)  
         note.setStyleSheet("color: gray; font-style: italic; border: 1px solid gray; padding: 10px;")
         layout.addWidget(note)
 
@@ -102,7 +102,7 @@ class LoginWindow(QWidget):
         layout.setContentsMargins(30, 30, 30, 30)
 
         header = QLabel("Crea un Nuovo Account")
-        header.setAlignment(Qt.AlignCenter)  # type: ignore
+        header.setAlignment(Qt.AlignCenter)  
         header.setStyleSheet("background-color: #E6D2B5; color: #8C1515; font-size: 28px; font-weight: bold; padding: 15px;")
         layout.addWidget(header)
 
@@ -121,7 +121,7 @@ class LoginWindow(QWidget):
         form_layout.addRow("Email:", self.reg_email)
         
         self.reg_password = QLineEdit()
-        self.reg_password.setEchoMode(QLineEdit.Password) # type: ignore
+        self.reg_password.setEchoMode(QLineEdit.Password) 
         self.reg_password.setStyleSheet("border: 1px solid #8C1515; padding: 5px;")
         form_layout.addRow("Password:", self.reg_password)
 

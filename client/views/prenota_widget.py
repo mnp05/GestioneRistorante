@@ -87,9 +87,9 @@ class PrenotaWidget(QWidget):
         self.table.setHorizontalHeaderLabels([
             "ID", "Data", "Ora", "Persone", "Stato", "Tavolo"
         ])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
-        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) 
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) 
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) 
         right_layout.addWidget(self.table)
 
         btn_layout = QHBoxLayout()
@@ -120,9 +120,9 @@ class PrenotaWidget(QWidget):
                 
                 stato = str(p.get("stato", ""))
                 item_stato = QTableWidgetItem(stato)
-                if stato == "CONFERMATA": item_stato.setForeground(Qt.darkGreen) # type: ignore
-                elif stato == "RICHIESTA": item_stato.setForeground(Qt.darkYellow) # type: ignore
-                elif stato == "DISDETTA": item_stato.setForeground(Qt.darkRed) # type: ignore
+                if stato == "CONFERMATA": item_stato.setForeground(Qt.darkGreen) 
+                elif stato == "RICHIESTA": item_stato.setForeground(Qt.darkYellow) 
+                elif stato == "DISDETTA": item_stato.setForeground(Qt.darkRed) 
                 self.table.setItem(row, 4, item_stato)
                 
                 tavolo = str(p.get("tavolo_id", ""))
@@ -157,8 +157,8 @@ class PrenotaWidget(QWidget):
             return
 
         row = selected[0].row()
-        booking_id = self.table.item(row, 0).text() # type: ignore
-        stato = self.table.item(row, 4).text() # type: ignore
+        booking_id = self.table.item(row, 0).text() 
+        stato = self.table.item(row, 4).text() 
 
         if stato in ["DISDETTA", "CONCLUSA"]:
             QMessageBox.warning(self, "Attenzione", "Questa prenotazione non può essere annullata.")
@@ -167,7 +167,7 @@ class PrenotaWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Annullamento",
             "Vuoi davvero annullare questa prenotazione?",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:

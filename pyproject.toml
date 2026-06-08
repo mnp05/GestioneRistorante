@@ -1,0 +1,16 @@
+[tool.pyright]
+typeCheckingMode = "off"
+reportMissingImports = false
+reportMissingTypeStubs = false
+reportGeneralTypeIssues = false
+reportUnknownMemberType = false
+reportArgumentType = false
+reportCallIssue = false
+
+[tool.pyrefly]
+exclude = [".venv", "**/__pycache__"]
+typeCheckingMode = "off"
+reportMissingTypeStubs = "none"
+reportGeneralTypeIssues = "none"
+reportArgumentType = "none"
+reportCallIssue = "none"

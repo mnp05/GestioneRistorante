@@ -19,7 +19,7 @@ class StaffLoginWindow(QWidget):
         layout.setContentsMargins(40, 40, 40, 40)
 
         header = QLabel("Area Staff")
-        header.setAlignment(Qt.AlignCenter) # type: ignore
+        header.setAlignment(Qt.AlignCenter) 
         header.setStyleSheet("""
             background-color: #8C1515;
             color: white;
@@ -30,7 +30,7 @@ class StaffLoginWindow(QWidget):
         layout.addWidget(header)
 
         subtitle = QLabel("Accesso riservato a Dipendenti e Gestori")
-        subtitle.setAlignment(Qt.AlignCenter) # type: ignore
+        subtitle.setAlignment(Qt.AlignCenter) 
         subtitle.setStyleSheet("color: gray; font-style: italic; font-size: 13px;")
         layout.addWidget(subtitle)
 
@@ -46,7 +46,7 @@ class StaffLoginWindow(QWidget):
         pass_layout = QHBoxLayout()
         pass_label = QLabel("Password:")
         self.pass_input = QLineEdit()
-        self.pass_input.setEchoMode(QLineEdit.Password) # type: ignore
+        self.pass_input.setEchoMode(QLineEdit.Password) 
         self.pass_input.setStyleSheet("border: 1px dashed black; padding: 5px;")
         pass_layout.addWidget(pass_label)
         pass_layout.addWidget(self.pass_input)
@@ -67,13 +67,13 @@ class StaffLoginWindow(QWidget):
             QPushButton:hover { background-color: #A31F1F; }
         """)
         self.btn_accedi.clicked.connect(self.handle_login)
-        layout.addWidget(self.btn_accedi, alignment=Qt.AlignCenter) # type: ignore
+        layout.addWidget(self.btn_accedi, alignment=Qt.AlignCenter) 
 
         btn_recupera_password = QPushButton("Password dimenticata?")
         btn_recupera_password.setStyleSheet("color: #8C1515; text-decoration: underline; background: transparent; border: none;")
-        btn_recupera_password.setCursor(Qt.PointingHandCursor) # type: ignore
+        btn_recupera_password.setCursor(Qt.PointingHandCursor) 
         btn_recupera_password.clicked.connect(self.handle_recupera_password)
-        layout.addWidget(btn_recupera_password, alignment=Qt.AlignCenter) # type: ignore
+        layout.addWidget(btn_recupera_password, alignment=Qt.AlignCenter) 
 
         layout.addStretch()
         self.setLayout(layout)

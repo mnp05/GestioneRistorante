@@ -70,9 +70,9 @@ class BuoniWidget(QWidget):
 
         self.table = QTableWidget(0, 5)
         self.table.setHorizontalHeaderLabels(["Codice", "Valore (€)", "Scadenza", "Ruolo", "Stato"])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
-        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) 
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) 
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) 
         right_layout.addWidget(self.table)
 
         btn_aggiorna = QPushButton("Aggiorna Storico")
@@ -102,9 +102,9 @@ class BuoniWidget(QWidget):
 
                 stato = str(b.get("stato", ""))
                 item_stato = QTableWidgetItem(stato)
-                if stato == "ATTIVO": item_stato.setForeground(Qt.darkGreen) # type: ignore
-                elif stato == "RISCATTATO": item_stato.setForeground(Qt.darkBlue) # type: ignore
-                elif stato == "SCADUTO": item_stato.setForeground(Qt.darkRed) # type: ignore
+                if stato == "ATTIVO": item_stato.setForeground(Qt.darkGreen) 
+                elif stato == "RISCATTATO": item_stato.setForeground(Qt.darkBlue) 
+                elif stato == "SCADUTO": item_stato.setForeground(Qt.darkRed) 
                 self.table.setItem(row, 4, item_stato)
                 
         except Exception as e:
@@ -116,7 +116,7 @@ class BuoniWidget(QWidget):
         # Simulazione del processo di pagamento tramite un dialog visivo
         dialog = QProgressDialog("Connessione al gateway di pagamento...", "Annulla", 0, 100, self)
         dialog.setWindowTitle("Pagamento Sicuro")
-        dialog.setWindowModality(Qt.WindowModal) # type: ignore
+        dialog.setWindowModality(Qt.WindowModal) 
         dialog.setMinimumDuration(0)
         
         # Una chiusura personalizzata tramite QTimer

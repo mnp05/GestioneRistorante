@@ -1,5 +1,0 @@
-[tool.pyrefly]
-search_path = ["."]
-reportArgumentType = "none"
-reportGeneralTypeIssues = "none"
-bad-argument-type = "none"

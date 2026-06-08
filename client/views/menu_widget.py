@@ -52,11 +52,11 @@ class MenuWidget(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(5)
         self.table.setHorizontalHeaderLabels(["Preferito", "Nome Piatto", "Costo", "Allergeni", "Ingredienti"])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) 
         # Fix column 0 width for the heart button
-        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents) # type: ignore
-        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
+        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents) 
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) 
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) 
         layout.addWidget(self.table)
 
         # Pulsante Dettagli

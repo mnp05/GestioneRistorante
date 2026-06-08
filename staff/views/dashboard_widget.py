@@ -53,7 +53,7 @@ class StaffDashboardWidget(QWidget):
 
         self.messaggi_container = QWidget()
         self.messaggi_layout = QVBoxLayout(self.messaggi_container)
-        self.messaggi_layout.setAlignment(Qt.AlignTop) # type: ignore
+        self.messaggi_layout.setAlignment(Qt.AlignTop) 
         scroll.setWidget(self.messaggi_container)
 
         layout.addWidget(scroll)
@@ -107,7 +107,7 @@ class StaffDashboardWidget(QWidget):
             if not messaggi:
                 lbl_vuoto = QLabel("Nessun messaggio in bacheca.")
                 lbl_vuoto.setStyleSheet("color: gray; font-style: italic; padding: 20px;")
-                lbl_vuoto.setAlignment(Qt.AlignCenter) # type: ignore
+                lbl_vuoto.setAlignment(Qt.AlignCenter) 
                 self.messaggi_layout.addWidget(lbl_vuoto)
                 return
 
@@ -210,7 +210,7 @@ class StaffDashboardWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Eliminazione",
             "Eliminare questo messaggio?",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:
@@ -241,10 +241,10 @@ class StaffDashboardWidget(QWidget):
 
     def modifica_password(self):
         from PyQt5.QtWidgets import QInputDialog, QLineEdit
-        old_pw, ok = QInputDialog.getText(self, "Modifica Password", "Inserisci la tua VECCHIA password:", QLineEdit.Password) # type: ignore
+        old_pw, ok = QInputDialog.getText(self, "Modifica Password", "Inserisci la tua VECCHIA password:", QLineEdit.Password) 
         if not ok or not old_pw: return
         
-        new_pw, ok2 = QInputDialog.getText(self, "Modifica Password", "Inserisci la NUOVA password:", QLineEdit.Password) # type: ignore
+        new_pw, ok2 = QInputDialog.getText(self, "Modifica Password", "Inserisci la NUOVA password:", QLineEdit.Password) 
         if not ok2 or not new_pw: return
         
         try:

@@ -1,6 +1,8 @@
 import pandas as pd
 from pathlib import Path
 
+pd.set_option('future.no_silent_downcasting', True)
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data"
 

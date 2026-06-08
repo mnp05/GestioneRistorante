@@ -72,7 +72,7 @@ class TavoloDialog(QDialog):
 
     def elimina(self):
         risposta = QMessageBox.question(self, "Conferma", "Sei sicuro di voler eliminare questo tavolo?",
-                                        QMessageBox.Yes | QMessageBox.No) # type: ignore
+                                        QMessageBox.Yes | QMessageBox.No) 
         if risposta == QMessageBox.Yes:
             self.vuole_eliminare = True
             self.accept()

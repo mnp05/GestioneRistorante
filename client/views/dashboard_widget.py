@@ -27,16 +27,16 @@ class DashboardWidget(QWidget):
         punti_layout = QVBoxLayout(card_punti)
         
         lbl_titolo_punti = QLabel("SALDO PUNTI FEDELTA'")
-        lbl_titolo_punti.setAlignment(Qt.AlignCenter)  # type: ignore
+        lbl_titolo_punti.setAlignment(Qt.AlignCenter)  
         lbl_titolo_punti.setStyleSheet("color: #8C1515; font-weight: bold; border: none;")
         
         saldo = self.user_data.get("saldo_punti", 0)
         lbl_punti = QLabel(f"{saldo} Punti")
-        lbl_punti.setAlignment(Qt.AlignCenter)  # type: ignore
+        lbl_punti.setAlignment(Qt.AlignCenter)  
         lbl_punti.setStyleSheet("font-size: 24px; font-weight: bold; border: none;")
         
         lbl_prossimo = QLabel("Prossimo premio a 100")
-        lbl_prossimo.setAlignment(Qt.AlignCenter)  # type: ignore
+        lbl_prossimo.setAlignment(Qt.AlignCenter)  
         lbl_prossimo.setStyleSheet("color: gray; border: none;")
 
         punti_layout.addWidget(lbl_titolo_punti)
@@ -51,15 +51,15 @@ class DashboardWidget(QWidget):
         buoni_layout = QVBoxLayout(card_buoni)
         
         lbl_titolo_buoni = QLabel("BUONI REGALO")
-        lbl_titolo_buoni.setAlignment(Qt.AlignCenter) # type: ignore
+        lbl_titolo_buoni.setAlignment(Qt.AlignCenter) 
         lbl_titolo_buoni.setStyleSheet("color: #8C1515; font-weight: bold; border: none; font-size: 16px;")
 
         lbl_info = QLabel("Scopri i nostri Buoni Regalo!\n\nRegala un'esperienza gastronomica unica\no riscatta un codice ricevuto in dono.")
-        lbl_info.setAlignment(Qt.AlignCenter) # type: ignore
+        lbl_info.setAlignment(Qt.AlignCenter) 
         lbl_info.setStyleSheet("border: none; color: #555; font-size: 14px;")
 
         lbl_cta = QLabel("Vai alla tab 'Buoni Regalo' in alto")
-        lbl_cta.setAlignment(Qt.AlignCenter) # type: ignore
+        lbl_cta.setAlignment(Qt.AlignCenter) 
         lbl_cta.setStyleSheet("font-style: italic; color: #888; border: none;")
 
         buoni_layout.addWidget(lbl_titolo_buoni)
@@ -128,7 +128,7 @@ class DashboardWidget(QWidget):
         password, ok = QInputDialog.getText(
             self, "Conferma Cancellazione",
             "Attenzione! L'eliminazione dell'account è irreversibile e perderai tutti i punti fedeltà.\n\nPer confermare, inserisci la tua password:",
-            QLineEdit.Password # type: ignore
+            QLineEdit.Password 
         )
 
         if ok:
@@ -147,10 +147,10 @@ class DashboardWidget(QWidget):
 
     def modifica_password(self):
         from PyQt5.QtWidgets import QInputDialog, QLineEdit
-        old_pw, ok = QInputDialog.getText(self, "Modifica Password", "Inserisci la tua VECCHIA password:", QLineEdit.Password) # type: ignore
+        old_pw, ok = QInputDialog.getText(self, "Modifica Password", "Inserisci la tua VECCHIA password:", QLineEdit.Password) 
         if not ok or not old_pw: return
         
-        new_pw, ok2 = QInputDialog.getText(self, "Modifica Password", "Inserisci la NUOVA password:", QLineEdit.Password) # type: ignore
+        new_pw, ok2 = QInputDialog.getText(self, "Modifica Password", "Inserisci la NUOVA password:", QLineEdit.Password) 
         if not ok2 or not new_pw: return
         
         try:

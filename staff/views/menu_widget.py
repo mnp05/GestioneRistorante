@@ -40,9 +40,9 @@ class StaffMenuWidget(QWidget):
         self.table.setHorizontalHeaderLabels([
             "ID", "Nome", "Prezzo", "Allergeni", "Categoria", "Attivo"
         ])
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) # type: ignore
-        self.table.setSelectionBehavior(QTableWidget.SelectRows) # type: ignore
-        self.table.setEditTriggers(QTableWidget.NoEditTriggers) # type: ignore
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch) 
+        self.table.setSelectionBehavior(QTableWidget.SelectRows) 
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers) 
         layout.addWidget(self.table)
 
         btn_layout = QHBoxLayout()
@@ -145,7 +145,7 @@ class StaffMenuWidget(QWidget):
             campi[campo] = input_field
             form.addRow(label, input_field)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) # type: ignore
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel) 
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         form.addRow(buttons)
@@ -196,7 +196,7 @@ class StaffMenuWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Disattivazione",
             f"Disattivare il piatto '{piatto.get('nome')}'?",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:
@@ -220,7 +220,7 @@ class StaffMenuWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Eliminazione",
             f"Vuoi davvero eliminare fisicamente il piatto '{piatto.get('nome')}' dal database?\nAttenzione: l'operazione è irreversibile e potrebbe causare errori se il piatto è presente in ordini passati.",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:
@@ -244,7 +244,7 @@ class StaffMenuWidget(QWidget):
         risposta = QMessageBox.question(
             self, "Conferma Riattivazione",
             f"Riattivare il piatto '{piatto.get('nome')}'?",
-            QMessageBox.Yes | QMessageBox.No # type: ignore
+            QMessageBox.Yes | QMessageBox.No 
         )
 
         if risposta == QMessageBox.Yes:
