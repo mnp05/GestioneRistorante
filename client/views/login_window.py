@@ -169,13 +169,43 @@ class LoginWindow(QWidget):
             QMessageBox.critical(self, "Errore Accesso", str(e))
 
     def handle_recupera_password(self):
-        from PyQt5.QtWidgets import QInputDialog
+        from PyQt5.QtWidgets import QInputDialog, QDialog, QFormLayout, QDialogButtonBox
         email, ok = QInputDialog.getText(self, "Recupero Password", "Inserisci l'indirizzo email associato al tuo account:")
         if ok and email.strip():
             try:
-                pw = APIClient.recupera_password(email.strip())
-                msg = f"📩 DA: noreply@ristorante.it\nA: {email.strip()}\n\nAbbiamo ricevuto una richiesta di recupero per le tue credenziali.\nLa tua password attuale è: {pw}\n\nPer motivi di sicurezza ti consigliamo di modificarla al prossimo accesso."
+                # 3. Chiamata API per generare il codice temporaneo
+                code = APIClient.recupera_password(email.strip())
+                
+                # 4. Simulazione invio email
+                msg = f"📩 DA: noreply@ristorante.it\nA: {email.strip()}\n\nAbbiamo ricevuto una richiesta di recupero per le tue credenziali.\nIl tuo codice temporaneo è: {code}\n\nInseriscilo nella schermata del programma per scegliere una nuova password."
                 QMessageBox.information(self, "E-mail Ricevuta (Simulazione)", msg)
+                
+                # 5. Dialogo per inserire Codice + Nuova Password
+                dialog = QDialog(self)
+                dialog.setWindowTitle("Reimposta Password")
+                dialog.resize(300, 150)
+                layout = QFormLayout(dialog)
+                
+                input_code = QLineEdit()
+                layout.addRow("Codice ricevuto:", input_code)
+                
+                input_new_pw = QLineEdit()
+                input_new_pw.setEchoMode(QLineEdit.Password)
+                layout.addRow("Nuova Password:", input_new_pw)
+                
+                button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+                button_box.accepted.connect(dialog.accept)
+                button_box.rejected.connect(dialog.reject)
+                layout.addWidget(button_box)
+                
+                if dialog.exec_() == QDialog.Accepted:
+                    try:
+                        # 6. Aggiornamento
+                        APIClient.reset_password(email.strip(), input_code.text().strip(), input_new_pw.text())
+                        QMessageBox.information(self, "Successo", "Password reimpostata con successo! Ora puoi accedere.")
+                    except Exception as reset_e:
+                        QMessageBox.critical(self, "Errore Reset", str(reset_e))
+                        
             except Exception as e:
                 QMessageBox.warning(self, "Errore", str(e))
 

@@ -1,6 +1,7 @@
 import pandas as pd
 from typing import Optional
 from server.models.base_repository import CSVRepository
+from werkzeug.security import check_password_hash
 
 class UserRepository(CSVRepository):
     def __init__(self) -> None:
@@ -31,7 +32,7 @@ class UserRepository(CSVRepository):
 
     def authenticate(self, email: str, password: str) -> Optional[dict]:
         user = self.get_by_email(email)
-        if user and user.get("password") == password:
+        if user and check_password_hash(str(user.get("password", "")), password):
             return user
         return None
 

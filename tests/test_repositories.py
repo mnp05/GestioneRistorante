@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import server.models.base_repository as base_repo
 from server.models.user import UserRepository
+from werkzeug.security import generate_password_hash
 
 class TestUserRepository(unittest.TestCase):
     def setUp(self):
@@ -49,7 +50,7 @@ class TestUserRepository(unittest.TestCase):
         self.user_repo.create({
             "nome": "Luigi",
             "email": "luigi@example.com",
-            "password": "secure"
+            "password": generate_password_hash("secure")
         })
         
         # Login valido

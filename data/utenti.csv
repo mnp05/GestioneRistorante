@@ -1,5 +1,5 @@
 id,nome,cognome,email,password,ruolo,livello_accesso,stato_account,ultimo_accesso,saldo_punti,piatti_preferiti
-1,Mario,Rossi,gestore@ristorante.it,ciao123,Gestore,ACCESSO_COMPLETO,ATTIVO,2026-06-08 11:32:45,0,
-2,Luigi,Verdi,sala@ristorante.it,sala123,Dipendente,ACCESSO_COMPLETO,ATTIVO,2026-06-03 12:58:04,0,
-3,Anna,Bianchi,cucina@ristorante.it,cucina123,Dipendente,GESTIONE_MENU,ATTIVO,,0,
-10,Alessandro,Conti,ale.conti@email.it,cliente123,Cliente,,ATTIVO,,0,
+1,Mario,Rossi,gestore@ristorante.it,scrypt:32768:8:1$MrdEHRO3lHaL5xV0$e0a954d19a945c776c7bc55fc8822fc5490881a6892e1642bd6464e3e968962625d78a9c367220220bab3991134dbbe3778a047e83121d2bc1bbbdcd4f61bc0c,Gestore,ACCESSO_COMPLETO,ATTIVO,2026-06-08 11:32:45,0,
+2,Luigi,Verdi,sala@ristorante.it,scrypt:32768:8:1$HLlbnejerWIAel7H$b6773bb2f7e102fa4c92df2f1f95964af69af8cb083d9c1dce1d481a692b105f24880a519888d236a2246a5431c1aa71e44749b1ec32e5ee7b04b17e75c14af6,Dipendente,ACCESSO_COMPLETO,ATTIVO,2026-06-03 12:58:04,0,
+3,Anna,Bianchi,cucina@ristorante.it,scrypt:32768:8:1$O6HgXUmho6eHxWRJ$84a4460c76ac168667c2d4fea089e815ff68fd919e7f4555f8b03e8e534a26567a9e7489a438226f70eb888d4f294f8aabad6b818c6949fd1f1349477c544571,Dipendente,GESTIONE_MENU,ATTIVO,,0,
+10,Alessandro,Conti,mario.rossi@email.it,scrypt:32768:8:1$NBg1ja0KWkPxGuuj$1ef1bb3ebeb5d40a0cc2f86e2f627bf3927b1fa00dbc230185da40cacb379fcdff2d7043fc391ddcca271ec6bb8dab51a5c2a3fe910914b68a7b96be20f49766,Cliente,,ATTIVO,2026-06-09 15:25:39,0,

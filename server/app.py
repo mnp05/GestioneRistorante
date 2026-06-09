@@ -93,10 +93,21 @@ def recover_password():
     data = request.json
     email = data.get("email", "") if data else ""
     try:
-        pw = auth_ctrl.handle_recover_password(email)
-        return jsonify({"status": "success", "password": pw}), 200
+        code = auth_ctrl.handle_recover_password(email)
+        return jsonify({"status": "success", "code": code}), 200
     except ValueError as e:
         return jsonify({"status": "error", "message": str(e)}), 404
+
+@app.route('/api/auth/reset', methods=['POST'])
+def reset_password():
+    data = request.json
+    try:
+        success = auth_ctrl.handle_reset_password(data.get("email"), data.get("code"), data.get("new_password"))
+        if success:
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Errore durante il reset"}), 400
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 @app.route('/api/auth/dipendente/<dipendente_id>', methods=['PUT'])
 def update_dipendente(dipendente_id):

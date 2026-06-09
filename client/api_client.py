@@ -45,8 +45,19 @@ class APIClient:
     def recupera_password(cls, email):
         res = requests.post(f"{cls.BASE_URL}/auth/recover", json={"email": email})
         if res.status_code == 200:
-            return res.json().get("password")
+            return res.json().get("code")
         raise ValueError(res.json().get("message", "Impossibile recuperare la password"))
+
+    @classmethod
+    def reset_password(cls, email, code, new_password):
+        res = requests.post(f"{cls.BASE_URL}/auth/reset", json={
+            "email": email,
+            "code": code,
+            "new_password": new_password
+        })
+        if res.status_code == 200:
+            return True
+        raise ValueError(res.json().get("message", "Errore durante la reimpostazione della password"))
 
     @classmethod
     def get_menu(cls):

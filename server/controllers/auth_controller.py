@@ -1,10 +1,13 @@
 from datetime import datetime
+import random
+import string
+from werkzeug.security import generate_password_hash, check_password_hash
 from server.models.user import UserRepository
-
 
 class AuthController:
     def __init__(self):
         self.user_repo = UserRepository()
+        self.reset_tokens = {}
 
     def handle_login(self, email: str, password: str) -> dict:
         user = self.user_repo.authenticate(email, password)
@@ -23,7 +26,7 @@ class AuthController:
             "nome": nome.strip(),
             "cognome": cognome.strip(),
             "email": email.strip(),
-            "password": password, # In futuro aggiungere l'hash qui
+            "password": generate_password_hash(password),
             "ruolo": "Cliente",
             "livello_accesso": "",
             "stato_account": "ATTIVO",
@@ -41,7 +44,7 @@ class AuthController:
             "nome": nome.strip(),
             "cognome": cognome.strip(),
             "email": email.strip(),
-            "password": password, # In futuro aggiungere l'hash qui
+            "password": generate_password_hash(password),
             "ruolo": "Dipendente",
             "livello_accesso": livello_accesso,
             "stato_account": "ATTIVO",
@@ -75,8 +78,8 @@ class AuthController:
         if not cliente or cliente.get("ruolo") != "Cliente":
             raise ValueError("Account cliente non trovato.")
             
-        # Verifica banale della password (in produzione usare hashing come bcrypt)
-        if str(cliente.get("password", "")) != password:
+        # Verifica della password crittografata
+        if not check_password_hash(str(cliente.get("password", "")), password):
             raise ValueError("Password errata. Impossibile cancellare l'account.")
             
         return self.user_repo.delete(cliente_id)
@@ -102,14 +105,29 @@ class AuthController:
         if not user:
             raise ValueError("Utente non trovato.")
             
-        if str(user.get("password", "")) != old_pw:
+        if not check_password_hash(str(user.get("password", "")), old_pw):
             raise ValueError("Vecchia password errata.")
             
-        return self.user_repo.update(user_id, {"password": new_pw})
+        return self.user_repo.update(user_id, {"password": generate_password_hash(new_pw)})
 
     def handle_recover_password(self, email: str) -> str:
-        utenti = self.user_repo.get_all()
-        for u in utenti:
-            if u.get("email") == email:
-                return str(u.get("password", ""))
+        user = self.user_repo.get_by_email(email)
+        if user:
+            code = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            self.reset_tokens[email] = code
+            return code
         raise ValueError("Nessun account associato a questa email.")
+
+    def handle_reset_password(self, email: str, code: str, new_pw: str) -> bool:
+        if email not in self.reset_tokens or self.reset_tokens[email] != code:
+            raise ValueError("Codice temporaneo non valido.")
+        
+        user = self.user_repo.get_by_email(email)
+        if not user:
+            raise ValueError("Utente non trovato.")
+            
+        success = self.user_repo.update(user["id"], {"password": generate_password_hash(new_pw)})
+        if success:
+            del self.reset_tokens[email]
+            return True
+        return False
