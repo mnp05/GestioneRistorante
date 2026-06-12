@@ -148,4 +148,11 @@ class APIClient:
         res = requests.put(f"{cls.BASE_URL}/bookings/{booking_id}", json=dati)
         if res.status_code == 200:
             return True
-        return False
+        raise ValueError(res.json().get("message", "Errore durante la modifica della prenotazione"))
+
+    @classmethod
+    def get_posti_disponibili(cls, data, ora):
+        res = requests.get(f"{cls.BASE_URL}/availability/seats", params={"data": data, "ora": ora})
+        if res.status_code == 200:
+            return res.json().get("available_seats", 0)
+        return 0

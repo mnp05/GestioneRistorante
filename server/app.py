@@ -151,13 +151,16 @@ def create_booking():
 @app.route('/api/bookings/<booking_id>', methods=['PUT'])
 def update_booking(booking_id):
     data = request.json
-    if data.get("stato") == "CONFERMATA" and data.get("tavolo_id"):
-        success = booking_ctrl.handle_confirm_booking(booking_id, data.get("tavolo_id"))
-    else:
-        success = booking_ctrl.handle_edit_booking(booking_id, data) # type: ignore
-    if success:
-        return jsonify({"status": "success"}), 200
-    return jsonify({"status": "error", "message": "Prenotazione non trovata"}), 404
+    try:
+        if data.get("stato") == "CONFERMATA" and data.get("tavolo_id"):
+            success = booking_ctrl.handle_confirm_booking(booking_id, data.get("tavolo_id"))
+        else:
+            success = booking_ctrl.handle_edit_booking(booking_id, data) # type: ignore
+        if success:
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Prenotazione non trovata"}), 404
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 @app.route('/api/bookings/<booking_id>/auto_confirm', methods=['POST'])
 def auto_confirm_booking(booking_id):
@@ -165,6 +168,16 @@ def auto_confirm_booking(booking_id):
     if tavolo_id:
         return jsonify({"status": "success", "tavolo_id": tavolo_id}), 200
     return jsonify({"status": "error", "error_code": "OVERBOOKING", "message": "Nessun tavolo compatibile libero."}), 400
+
+@app.route('/api/availability/seats', methods=['GET'])
+def get_availability_seats():
+    data = request.args.get('data')
+    ora = request.args.get('ora')
+    if not data or not ora:
+        return jsonify({"status": "error", "message": "Parametri data e ora richiesti"}), 400
+    
+    posti = booking_ctrl.get_available_seats(data, ora)
+    return jsonify({"status": "success", "available_seats": posti}), 200
 
 @app.route('/api/bookings/<booking_id>', methods=['DELETE'])
 def delete_booking(booking_id):

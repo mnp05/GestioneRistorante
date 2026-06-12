@@ -1,30 +1,35 @@
 id,nome,descrizione,prezzo,allergeni,categoria_id,foto_path,attivo
-1,Spaghetti alla Carbonara,"Pasta con uova, guanciale, pecorino e pepe",12.5,"Glutine, Uova, Lattosio",2,,True
-2,Bistecca alla Fiorentina,Taglio di carne chianina cotto al sangue (prezzo all'etto),5.5/etto,,3,,True
-3,Tiramisù,Savoiardi inzuppati nel caffè con crema al mascarpone,6.0,"Glutine, Uova, Lattosio",4,,True
-4,Acqua Minerale Naturale,Bottiglia in vetro da 75cl,2.0,,5,,True
-5,Pasta al Pesto,"Pasta fresca con basilico, pinoli e parmigiano",10.0,"Glutine, Lattosio, Frutta a guscio",2,,True
-6,Bruschetta al Pomodoro,Pane tostato con pomodorini freschi e basilico,5.0,Glutine,1,,True
-7,Tagliere di Salumi e Formaggi,Selezione di affettati e formaggi locali con miele,14.0,Lattosio,1,,True
-8,Tartare di Manzo,Carne cruda tritata al coltello con senape e capperi,16.0,Senape,1,,True
-9,Fiori di Zucca Fritti,Fiori di zucca in pastella ripieni di ricotta,8.0,"Glutine, Lattosio",1,,True
-10,Carpaccio di Salmone,Fettine di salmone affumicato con rucola e limone,12.0,Pesce,1,,True
-11,Risotto ai Funghi Porcini,Riso carnaroli con porcini freschi mantecato al burro,14.0,Lattosio,2,,True
-12,Lasagne alla Bolognese,Sfoglia all'uovo con ragù di carne e besciamella,12.0,"Glutine, Uova, Lattosio",2,,True
-13,Gnocchi alla Sorrentina,Gnocchi di patate cotti al forno con pomodoro e mozzarella,11.0,"Glutine, Lattosio",2,,True
-14,Paccheri allo Scoglio,"Pasta con cozze, vongole, calamari e gamberi",16.0,"Glutine, Pesce, Crostacei, Molluschi",2,,True
-15,Filetto di Branzino al Forno,Pesce fresco cotto al forno con patate e olive,18.0,Pesce,3,,True
-16,Pollo Arrosto con Patate,Cosce e sovracosce di pollo ruspante con patate rustiche,13.0,,3,,True
-17,Cotoletta alla Milanese,Lombata di vitello impanata e fritta nel burro,15.0,"Glutine, Uova, Lattosio",3,,True
-18,Scaloppine al Limone,Fettine di vitello sfumate al limone,12.0,"Glutine, Lattosio",3,,True
-19,Tagliata Rucola e Grana,Tagliata di manzo servita con scaglie di grana,18.0,Lattosio,3,,True
-20,Panna Cotta ai Frutti di Bosco,Panna fresca con coulis di frutti rossi,5.0,Lattosio,4,,True
-21,Cheesecake alle Fragole,Torta fredda al formaggio con base di biscotto,6.0,"Glutine, Lattosio",4,,True
-22,Cannolo Siciliano,Scorza croccante ripiena di ricotta di pecora e gocce di cioccolato,4.5,"Glutine, Lattosio",4,,True
-23,Sorbetto al Limone,Sorbetto fresco e digestivo,4.0,,4,,True
-24,Acqua Minerale Frizzante,Bottiglia in vetro da 75cl,2.0,,5,,True
-25,Coca Cola,Lattina da 33cl,3.0,,5,,True
-26,Birra Artigianale Bionda,Birra alla spina da 50cl,5.0,Glutine,5,,True
-27,Calice di Vino Rosso,Chianti Classico DOCG,6.0,,5,,True
-28,Calice di Vino Bianco,Gewürztraminer DOC,6.0,,5,,True
-29,Caffè Espresso,Caffè 100% Arabica,1.5,,5,,True
+1,La classica ascolana,La classica ed inimitabile oliva fritta di nostra produzione artigianale (10 pz),10.0,,1,,True
+2,Verde velluto,Vellutata di piselli con gocce di gel al frutto della passione e piselli tostati.,9.0,,1,,True
+3,Cremoso croccante,"Crema di Ceci, guacamole, cumino con pomodoro secco sott'olio su ventaglio di pane tostato.",6.0,,1,,True
+4,Bancaletto,Affettati misti con pecorino del territorio.,13.0,,1,,True
+5,Trilogia di tartare,"Tartare al coltello di Angus selezionato ai tre sapori, Guacamole e filetti di peperoncino, salsa di nocciole e fave di cacao e riccioli di tartufo uncinato e tuorlo d'uovo cbt.",20.0,,1,,True
+6,Bianca Bonta',"Uovo pochè con cremoso al parmiggiano Regggiano ® 30 mesi e la sua cialda croccante al tartufo nero uncinato fresco.",9.0,,1,,True
+7,Cotiche Rebbetrate,"Cotenna di maiale con erette profumate, cotta per oltre 5 ore in casseruola con passata di pomodoro e spolverata di pecorino.",9.0,,1,,True
+8,Dolce Amatrice,"Spaghettone del pastificio Regina dei Sibillini® con pomodoro biologico dell' Az.Prunotto con guanciale amatriciano, pecorino dei monti Sibillini, pepe tostato e il nostro ingrediente segreto.",14.0,,2,,True
+9,Linguina alla Trapanese,"Linguina del pastificio Regina dei Sibillini® con pesto di basilico e mandorle, datterino, aglio, Parmigiano Reggiano 24 mesi ® e pecorino dei Sibillini.",13.0,,2,,True
+10,Bianco Ragù,Tagliatelle di nostra produzione al ragù biaco di vitellone Marchigiano cremoso di Parmigiano Reggiano ® e Zafferano Aquilano.,14.0,,2,,True
+11,Frascarello Giallo,"Frascarelli della tradizione marchigiana al datterino giallo, curcuma, cipolla rossa di tropea caramellata e semindi zucca tostati.",13.0,,2,,True
+12,Lasagnetta alla Norcina,"Lasagna di nostra produzione con besciamella, salsiccia, champignon e tartufo uncinato estivo.",14.0,,2,,True
+13,Risotto del Bosco,"Riso Carnaroli tenuta San Massimo ® ai funghi porcini dei nostri monti, gel di mirtillo e lardo di Colonnata.",15.0,,2,,True
+14,Fritto misto ascolano,"Cotoletta di agnello della Marca, olive ripiene, crema fritta e verdure di stagione pastellate, tutto lavorato di nostra produzione.",18.0,,3,,True
+15,Composizione estiva,"Spiedo di involtino alla zucchina e melanzane con pomodoro e mozzarella vegana, pastelalti e fritti con puntarelle sott'olio su letto di salsa guacamole.",13.0,,3,,True
+16,Guancia borettana,Guancia di suino di cinta senese marinata e stracotta con cipolline borrettane all'aceto balsamico.,18.0,,3,,True
+17,Stracotto al rosso piceno superiore,"Brasato di scottona marchigiana, marinata e stracotta in forno per 5 ore al rosso piceno superiore.",22.0,,3,,True
+18,Cosa bolle in pentola,"Spezzatino di agnello della marca IGP con finocchietto selvatico, pinoli, uva passa e ciliegino rosso.",18.0,,3,,True
+19,Tra Fuoco e Latte,"Diaframma di bovino CBT, rosolato alla brace e servito con fonduta di parmigiano Reggiano. 200 gr",22.0,,3,,True
+20,Tagliata selezione Piccolo Teatro,Carne estremamente morbida e succosa al rosmarino e pepe rosa in grani (300gr. circa).,28.0,,3,,True
+21,Picanha di Black Angus USA,"Punta di sottofesa con elevato strato di grasso che la rende saporita e tenera. Cottura violenta allo spiedo. Servita esclusivamente al sangue (min. 400gr. Circa).",45.0,,3,,True
+22,Lombata di vacca pezzata rossa selezione Piccolo Teatro,"Carne dal colore rosso vivido con marezzatura fine e ben distribuita, sapore delicato e succoso, una garanzia di tenerezza e gusto, allevata al pascolo.",80.0,,3,,True
+23,Tomahawk di Marchigiana,Costata di manza marchiana con frollatura di +20gg (circa 1.5kg al pezzo),90.0,,3,,True
+24,Hammer Steak,"Stinco intero di vitello, affumicato con legno di faggio, cotto sottovuoto per 36 ore ed arrostito ai ferri",95.0,,3,,True
+25,Panna Cotta ai Frutti di Bosco,Panna fresca con coulis di frutti rossi,5.0,Lattosio,4,,True
+26,Cheesecake alle Fragole,Torta fredda al formaggio con base di biscotto,6.0,"Glutine, Lattosio",4,,True
+27,Cannolo Siciliano,Scorza croccante ripiena di ricotta di pecora e gocce di cioccolato,4.5,"Glutine, Lattosio",4,,True
+28,Sorbetto al Limone,Sorbetto fresco e digestivo,4.0,,4,,True
+29,Acqua Minerale Frizzante,Bottiglia in vetro da 75cl,2.0,,5,,True
+30,Coca Cola,Lattina da 33cl,3.0,,5,,True
+31,Birra Artigianale Bionda,Birra alla spina da 50cl,5.0,Glutine,5,,True
+32,Calice di Vino Rosso,Chianti Classico DOCG,6.0,,5,,True
+33,Calice di Vino Bianco,Gewürztraminer DOC,6.0,,5,,True
+34,Caffè Espresso,Caffè 100% Arabica,1.5,,5,,True

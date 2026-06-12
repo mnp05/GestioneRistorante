@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import datetime, timedelta
 from server.models.booking import BookingRepository
 from server.models.table import TableRepository
 from server.models.user import UserRepository
@@ -9,6 +10,16 @@ class BookingController:
         self.booking_repo = BookingRepository()
         self.table_repo = TableRepository()
         self.user_repo = UserRepository()
+
+    def _is_time_overlap(self, ora1_str: str, ora2_str: str, duration_hours: int = 3) -> bool:
+        try:
+            t1 = datetime.strptime(ora1_str, "%H:%M")
+            t2 = datetime.strptime(ora2_str, "%H:%M")
+            t1_end = t1 + timedelta(hours=duration_hours)
+            t2_end = t2 + timedelta(hours=duration_hours)
+            return max(t1, t2) < min(t1_end, t2_end)
+        except ValueError:
+            return ora1_str == ora2_str
 
     def handle_get_all_bookings(self, data_filtro: Optional[str] = None) -> list[dict]:
         tutte = self.booking_repo.get_all()
@@ -38,7 +49,32 @@ class BookingController:
         dati["stato"] = "RICHIESTA"
         return self.booking_repo.create(dati)
 
-    def handle_auto_assignment(self, data: str, ora: str, coperti: int) -> str:
+    def get_available_seats(self, data: str, ora: str) -> int:
+        tutti_i_tavoli = self.table_repo.get_all()
+        tutte_le_prenotazioni = self.booking_repo.get_all()
+        
+        prenotazioni_conflitto = [
+            p for p in tutte_le_prenotazioni 
+            if p.get("data") == data and self._is_time_overlap(str(p.get("ora")), ora) and p.get("stato") not in ["ANNULLATA", "DISDETTA"]
+        ]
+        
+        def _clean(val):
+            s = str(val).strip()
+            return s[:-2] if s.endswith('.0') else s
+
+        tavoli_occupati = [_clean(p.get("tavolo_id")) for p in prenotazioni_conflitto if p.get("tavolo_id")]
+        
+        posti_liberi = 0
+        for tavolo in tutti_i_tavoli:
+            if _clean(tavolo["numero"]) not in tavoli_occupati:
+                try:
+                    posti_liberi += int(float(tavolo.get("capienza", 0)))
+                except ValueError:
+                    pass
+                    
+        return posti_liberi
+
+    def handle_auto_assignment(self, data: str, ora: str, coperti: int, exclude_booking_id: Optional[str] = None) -> str:
         """
         Trova il primo tavolo libero in quella data/ora con capienza sufficiente.
         Ottimizza cercando la capienza minima necessaria.
@@ -54,8 +90,12 @@ class BookingController:
         # Trova tavoli già occupati in quella data e fascia oraria approssimativa
         prenotazioni_conflitto = [
             p for p in tutte_le_prenotazioni 
-            if p.get("data") == data and p.get("ora") == ora and p.get("stato") not in ["ANNULLATA", "DISDETTA"]
+            if p.get("data") == data and self._is_time_overlap(str(p.get("ora")), ora) and p.get("stato") not in ["ANNULLATA", "DISDETTA"]
         ]
+        
+        if exclude_booking_id:
+            prenotazioni_conflitto = [p for p in prenotazioni_conflitto if str(p.get("id")) != str(exclude_booking_id)]
+            
         def _clean(val):
             s = str(val).strip()
             return s[:-2] if s.endswith('.0') else s
@@ -72,6 +112,33 @@ class BookingController:
         return self.booking_repo.update(booking_id, {"stato": "CONFERMATA", "tavolo_id": tavolo_id})
 
     def handle_edit_booking(self, booking_id: str, data: dict) -> bool:
+        vecchia_prenotazione = self.booking_repo.get_by_id(booking_id)
+        if not vecchia_prenotazione:
+            raise ValueError("Prenotazione non trovata.")
+            
+        # Se la prenotazione è CONFERMATA e stiamo cambiando data/ora/persone, dobbiamo verificare
+        stato_attuale = vecchia_prenotazione.get("stato")
+        if stato_attuale == "CONFERMATA":
+            nuova_data = data.get("data", vecchia_prenotazione.get("data"))
+            nuova_ora = data.get("ora", vecchia_prenotazione.get("ora"))
+            
+            try:
+                # Usiamo str() per placare il linter, garantendo che int() riceva una stringa.
+                # Se il valore è None, diventerà "None" e int() solleverà correttamente un ValueError.
+                persone = int(str(data.get("numero_persone", vecchia_prenotazione.get("numero_persone", 1))))
+            except (ValueError, TypeError):
+                persone = int(str(vecchia_prenotazione.get("numero_persone", 1)))
+                
+            if (nuova_data != vecchia_prenotazione.get("data") or 
+                nuova_ora != vecchia_prenotazione.get("ora") or 
+                str(persone) != str(vecchia_prenotazione.get("numero_persone", 1))):
+                
+                nuovo_tavolo = self.handle_auto_assignment(str(nuova_data), str(nuova_ora), persone, exclude_booking_id=booking_id)
+                if not nuovo_tavolo:
+                    raise ValueError("Nessun tavolo compatibile libero per i nuovi dati scelti.")
+                    
+                data["tavolo_id"] = nuovo_tavolo
+
         return self.booking_repo.update(booking_id, data)
 
     def handle_try_auto_confirm(self, booking_id: str) -> Optional[str]:

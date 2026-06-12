@@ -1,6 +1,31 @@
 id,nome,descrizione,quantita_disponibile,unita_misura,soglia_minima,categoria_id,stato
 1,Farina 00,Farina per impasti,25.5,Kg,10.0,Farinacei,SUFFICIENTE
 2,Guanciale,Guanciale stagionato,10.0,Kg,3.0,Carni,SUFFICIENTE
-3,Uova,Uova fresche,50.0,Pz,20.0,Uova e Derivati,SUFFICIENTE
-4,Pomodori Pelati,Latta da 5kg,15.0,Kg,5.0,Verdure,SUFFICIENTE
-5,farro,buono,4,kg,2,Farinacei,SUFFICIENTE
+3,Uova,Uova fresche,150.0,Pz,20.0,Uova e Derivati,SUFFICIENTE
+4,Passata di Pomodoro,Passata di pomodoro biologica,15.0,Kg,5.0,Verdure,SUFFICIENTE
+5,Olive Ascolane,Olive ascolane artigianali da friggere,500.0,Pz,100.0,Surgelati/Pronti,SUFFICIENTE
+6,Piselli,Piselli surgelati per vellutate,12.0,Kg,3.0,Verdure,SUFFICIENTE
+7,Ceci,Ceci secchi,10.0,Kg,2.0,Legumi,SUFFICIENTE
+8,Pecorino Sibillini,Pecorino locale stagionato,5.0,Kg,1.5,Latticini,SUFFICIENTE
+9,Parmigiano Reggiano,Stagionato 30 mesi,8.0,Kg,2.0,Latticini,SUFFICIENTE
+10,Tartufo Uncinato,Tartufo nero fresco,0.5,Kg,0.1,Funghi e Tartufi,SUFFICIENTE
+11,Angus USA (Picanha),Punta di sottofesa Black Angus,15.0,Kg,5.0,Carni,SUFFICIENTE
+12,Manza Marchigiana (Tomahawk),Costata frollata 20gg,20.0,Kg,6.0,Carni,SUFFICIENTE
+13,Scottona Marchigiana,Taglio per stracotto,12.0,Kg,4.0,Carni,SUFFICIENTE
+14,Agnello della Marca,Tagli misti per spezzatino e fritti,10.0,Kg,3.0,Carni,SUFFICIENTE
+15,Spaghettoni Sibillini,Pasta di semola trafilata al bronzo,15.0,Kg,5.0,Farinacei,SUFFICIENTE
+16,Linguine,Pasta lunga di semola,10.0,Kg,3.0,Farinacei,SUFFICIENTE
+17,Riso Carnaroli,Riso per risotti (Tenuta San Massimo),12.0,Kg,4.0,Farinacei,SUFFICIENTE
+18,Funghi Porcini,Funghi porcini freschi/surgelati,4.0,Kg,1.0,Funghi e Tartufi,SUFFICIENTE
+19,Lardo di Colonnata,Lardo stagionato,2.0,Kg,0.5,Salumi e Insaccati,SUFFICIENTE
+20,Salsiccia Norcina,Salsiccia fresca di maiale,8.0,Kg,2.0,Carni,SUFFICIENTE
+21,Zucchine,Zucchine fresche,10.0,Kg,3.0,Verdure,SUFFICIENTE
+22,Melanzane,Melanzane fresche,8.0,Kg,2.0,Verdure,SUFFICIENTE
+23,Mozzarella,Mozzarella vaccina,6.0,Kg,2.0,Latticini,SUFFICIENTE
+24,Vino Rosso Piceno,Vino rosso per stracotti e sala,30.0,Bottiglie,10.0,Bevande,SUFFICIENTE
+25,Stinco di Vitello,Stinco intero,15.0,Pz,5.0,Carni,SUFFICIENTE
+26,Panna Fresca,Panna liquida per dolci,10.0,L,2.0,Latticini,SUFFICIENTE
+27,Frutti di Bosco,Frutti rossi surgelati,5.0,Kg,1.0,Frutta,SUFFICIENTE
+28,Ricotta di Pecora,Ricotta fresca per cannoli,4.0,Kg,1.0,Latticini,SUFFICIENTE
+29,Acqua Naturale,Bottiglie in vetro 75cl,100.0,Bottiglie,30.0,Bevande,SUFFICIENTE
+30,Birra Artigianale,Fusti da 20L,5.0,Fusti,2.0,Bevande,SUFFICIENTE
