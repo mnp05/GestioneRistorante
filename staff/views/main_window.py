@@ -6,6 +6,7 @@ from staff.views.menu_widget import StaffMenuWidget
 from staff.views.inventario_widget import InventarioWidget
 from staff.views.dashboard_widget import StaffDashboardWidget
 from staff.views.dipendenti_widget import DipendentiWidget
+from server.models.enums import LivelloAccesso, RuoloUtente
 
 
 class StaffMainWindow(QMainWindow):
@@ -92,19 +93,19 @@ class StaffMainWindow(QMainWindow):
         livello = self.user_data.get("livello_accesso", "")
         ruolo = self.user_data.get("ruolo", "")
 
-        if ruolo == "Gestore" or livello == "ACCESSO_COMPLETO":
+        if ruolo == RuoloUtente.GESTORE.value or livello == LivelloAccesso.ACCESSO_COMPLETO.value:
             add_custom_tab(TavoliWidget(), "Tavoli")
             add_custom_tab(PrenotazioniWidget(), "Prenotazioni")
             add_custom_tab(StaffMenuWidget(), "Menù")
             add_custom_tab(InventarioWidget(), "Inventario")
             add_custom_tab(StaffDashboardWidget(self.user_data), "Bacheca")
-            if ruolo == "Gestore":
+            if ruolo == RuoloUtente.GESTORE.value:
                 add_custom_tab(DipendentiWidget(self.user_data), "Dipendenti")
         else:
-            if livello == "GESTIONE_PRENOTAZIONI":
+            if livello == LivelloAccesso.GESTIONE_PRENOTAZIONI.value:
                 add_custom_tab(TavoliWidget(), "Tavoli")
                 add_custom_tab(PrenotazioniWidget(), "Prenotazioni")
-            elif livello == "GESTIONE_MENU":
+            elif livello == LivelloAccesso.GESTIONE_MENU.value:
                 add_custom_tab(StaffMenuWidget(), "Menù")
                 add_custom_tab(InventarioWidget(), "Inventario")
             

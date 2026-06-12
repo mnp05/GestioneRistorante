@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 from server.models.promo import PromoRepository
 from server.models.user import UserRepository
+from server.models.enums import StatoBuono
 
 
 class PromoController:
@@ -17,7 +18,7 @@ class PromoController:
         dati_buono = {
             "codice_univoco": codice,
             "valore": valore,
-            "stato": "ATTIVO",
+            "stato": StatoBuono.ATTIVO.value,
             "acquirente_id": acquirente_id,
             "beneficiario_id": "",
             "data_scadenza": data_scadenza
@@ -30,16 +31,16 @@ class PromoController:
             raise ValueError("Buono non trovato.")
             
         oggi = datetime.now().strftime("%Y-%m-%d")
-        if buono.get("stato") != "ATTIVO" or oggi > str(buono.get("data_scadenza")):
-            self.promo_repo.update_buono(codice, {"stato": "SCADUTO"})
+        if buono.get("stato") != StatoBuono.ATTIVO.value or oggi > str(buono.get("data_scadenza")):
+            self.promo_repo.update_buono(codice, {"stato": StatoBuono.SCADUTO.value})
             raise ValueError("Buono scaduto o non più attivo.")
 
         # Riscatto completato
         self.promo_repo.update_buono(codice, {
-            "stato": "RISCATTATO",
+            "stato": StatoBuono.RISCATTATO.value,
             "beneficiario_id": beneficiario_id
         })
-        buono["stato"] = "RISCATTATO"
+        buono["stato"] = StatoBuono.RISCATTATO.value
         return buono
 
     def get_accumulated_points(self, cliente_id: str) -> list[dict]:
@@ -72,13 +73,13 @@ class PromoController:
             raise ValueError("Buono non trovato.")
         
         oggi = datetime.now().strftime("%Y-%m-%d")
-        if buono.get("stato") != "ATTIVO" or oggi > str(buono.get("data_scadenza")):
+        if buono.get("stato") != StatoBuono.ATTIVO.value or oggi > str(buono.get("data_scadenza")):
             raise ValueError("Buono scaduto o non più attivo.")
         
         valore_buono = float(buono.get("valore", 0))
         nuovo_totale = max(0.0, totale - valore_buono)
         
         # Segna il buono come utilizzato
-        self.promo_repo.update_buono(codice, {"stato": "RISCATTATO"})
+        self.promo_repo.update_buono(codice, {"stato": StatoBuono.RISCATTATO.value})
         
         return nuovo_totale

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from server.models.booking import BookingRepository
 from server.models.table import TableRepository
 from server.models.user import UserRepository
+from server.models.enums import StatoPrenotazione, StatoTavolo
 
 
 class BookingController:
@@ -46,7 +47,7 @@ class BookingController:
         solo alla conferma da parte del dipendente.
         """
         dati["tavolo_id"] = ""
-        dati["stato"] = "RICHIESTA"
+        dati["stato"] = StatoPrenotazione.RICHIESTA.value
         return self.booking_repo.create(dati)
 
     def get_available_seats(self, data: str, ora: str) -> int:
@@ -55,7 +56,7 @@ class BookingController:
         
         prenotazioni_conflitto = [
             p for p in tutte_le_prenotazioni 
-            if p.get("data") == data and self._is_time_overlap(str(p.get("ora")), ora) and p.get("stato") not in ["ANNULLATA", "DISDETTA"]
+            if p.get("data") == data and self._is_time_overlap(str(p.get("ora")), ora) and p.get("stato") not in [StatoPrenotazione.ANNULLATA.value, StatoPrenotazione.DISDETTA.value]
         ]
         
         def _clean(val):
@@ -90,7 +91,7 @@ class BookingController:
         # Trova tavoli già occupati in quella data e fascia oraria approssimativa
         prenotazioni_conflitto = [
             p for p in tutte_le_prenotazioni 
-            if p.get("data") == data and self._is_time_overlap(str(p.get("ora")), ora) and p.get("stato") not in ["ANNULLATA", "DISDETTA"]
+            if p.get("data") == data and self._is_time_overlap(str(p.get("ora")), ora) and p.get("stato") not in [StatoPrenotazione.ANNULLATA.value, StatoPrenotazione.DISDETTA.value]
         ]
         
         if exclude_booking_id:
@@ -109,7 +110,7 @@ class BookingController:
         return "" # Nessun tavolo disponibile
 
     def handle_confirm_booking(self, booking_id: str, tavolo_id: str) -> bool:
-        return self.booking_repo.update(booking_id, {"stato": "CONFERMATA", "tavolo_id": tavolo_id})
+        return self.booking_repo.update(booking_id, {"stato": StatoPrenotazione.CONFERMATA.value, "tavolo_id": tavolo_id})
 
     def handle_edit_booking(self, booking_id: str, data: dict) -> bool:
         vecchia_prenotazione = self.booking_repo.get_by_id(booking_id)
@@ -118,7 +119,7 @@ class BookingController:
             
         # Se la prenotazione è CONFERMATA e stiamo cambiando data/ora/persone, dobbiamo verificare
         stato_attuale = vecchia_prenotazione.get("stato")
-        if stato_attuale == "CONFERMATA":
+        if stato_attuale == StatoPrenotazione.CONFERMATA.value:
             nuova_data = data.get("data", vecchia_prenotazione.get("data"))
             nuova_ora = data.get("ora", vecchia_prenotazione.get("ora"))
             
@@ -161,7 +162,7 @@ class BookingController:
         return None
 
     def handle_cancel_booking(self, booking_id: str) -> bool:
-        return self.booking_repo.update(booking_id, {"stato": "DISDETTA", "tavolo_id": ""})
+        return self.booking_repo.update(booking_id, {"stato": StatoPrenotazione.DISDETTA.value, "tavolo_id": ""})
         
     def handle_get_tables(self, data_filtro: Optional[str] = None) -> list[dict]:
         target_date = data_filtro if data_filtro else "DEFAULT"
@@ -174,11 +175,11 @@ class BookingController:
                 s = str(val).strip()
                 return s[:-2] if s.endswith('.0') else s
                 
-            tavoli_prenotati = [_clean(p.get("tavolo_id")) for p in prenotazioni_del_giorno if p.get("stato") in ["CONFERMATA", "RICHIESTA"] and p.get("tavolo_id")]
+            tavoli_prenotati = [_clean(p.get("tavolo_id")) for p in prenotazioni_del_giorno if p.get("stato") in [StatoPrenotazione.CONFERMATA.value, StatoPrenotazione.RICHIESTA.value] and p.get("tavolo_id")]
             
             for t in tavoli:
                 if _clean(t.get("numero")) in tavoli_prenotati:
-                    t["stato"] = "PRENOTATO"
+                    t["stato"] = StatoTavolo.PRENOTATO.value
                     
         return tavoli
         

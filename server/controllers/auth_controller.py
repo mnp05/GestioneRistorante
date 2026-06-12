@@ -3,6 +3,7 @@ import random
 import string
 from werkzeug.security import generate_password_hash, check_password_hash
 from server.models.user import UserRepository
+from server.models.enums import RuoloUtente, LivelloAccesso
 
 class AuthController:
     def __init__(self):
@@ -27,7 +28,7 @@ class AuthController:
             "cognome": cognome.strip(),
             "email": email.strip(),
             "password": generate_password_hash(password),
-            "ruolo": "Cliente",
+            "ruolo": RuoloUtente.CLIENTE.value,
             "livello_accesso": "",
             "stato_account": "ATTIVO",
             "ultimo_accesso": "",
@@ -37,7 +38,7 @@ class AuthController:
 
     def handle_create_employee(self, creatore_id: str, nome: str, cognome: str, email: str, password: str, livello_accesso: str) -> dict:
         creatore = self.user_repo.get_by_id(creatore_id)
-        if not creatore or creatore.get("ruolo") != "Gestore":
+        if not creatore or creatore.get("ruolo") != RuoloUtente.GESTORE.value:
             raise PermissionError("Solo il Gestore può creare account dipendenti.")
             
         dati_dipendente = {
@@ -45,7 +46,7 @@ class AuthController:
             "cognome": cognome.strip(),
             "email": email.strip(),
             "password": generate_password_hash(password),
-            "ruolo": "Dipendente",
+            "ruolo": RuoloUtente.DIPENDENTE.value,
             "livello_accesso": livello_accesso,
             "stato_account": "ATTIVO",
             "ultimo_accesso": "",
@@ -55,27 +56,27 @@ class AuthController:
         
     def handle_get_all_employees(self) -> list[dict]:
         utenti = self.user_repo.get_all()
-        return [u for u in utenti if u.get("ruolo") in ["Dipendente", "Gestore"]]
+        return [u for u in utenti if u.get("ruolo") in [RuoloUtente.DIPENDENTE.value, RuoloUtente.GESTORE.value]]
 
     def handle_get_all_clients(self) -> list[dict]:
         utenti = self.user_repo.get_all()
-        return [u for u in utenti if u.get("ruolo") == "Cliente"]
+        return [u for u in utenti if u.get("ruolo") == RuoloUtente.CLIENTE.value]
 
     def handle_remove_employee(self, creatore_id: str, dipendente_id: str) -> bool:
         creatore = self.user_repo.get_by_id(creatore_id)
-        if not creatore or creatore.get("ruolo") != "Gestore":
+        if not creatore or creatore.get("ruolo") != RuoloUtente.GESTORE.value:
             raise PermissionError("Solo il Gestore può eliminare account dipendenti.")
         
         # Non permettere l'auto-eliminazione o l'eliminazione di un altro gestore (per sicurezza base)
         target = self.user_repo.get_by_id(dipendente_id)
-        if not target or target.get("ruolo") == "Gestore":
+        if not target or target.get("ruolo") == RuoloUtente.GESTORE.value:
             raise ValueError("Impossibile eliminare l'account specificato.")
             
         return self.user_repo.delete(dipendente_id)
 
     def handle_remove_client(self, cliente_id: str, password: str) -> bool:
         cliente = self.user_repo.get_by_id(cliente_id)
-        if not cliente or cliente.get("ruolo") != "Cliente":
+        if not cliente or cliente.get("ruolo") != RuoloUtente.CLIENTE.value:
             raise ValueError("Account cliente non trovato.")
             
         # Verifica della password crittografata
@@ -93,11 +94,11 @@ class AuthController:
 
     def handle_modify_access_level(self, creatore_id: str, dipendente_id: str, nuovo_livello: str) -> bool:
         creatore = self.user_repo.get_by_id(creatore_id)
-        if not creatore or creatore.get("ruolo") != "Gestore":
+        if not creatore or creatore.get("ruolo") != RuoloUtente.GESTORE.value:
             raise PermissionError("Solo il Gestore può modificare i livelli di accesso.")
             
         target = self.user_repo.get_by_id(dipendente_id)
-        if not target or target.get("ruolo") == "Gestore":
+        if not target or target.get("ruolo") == RuoloUtente.GESTORE.value:
             raise ValueError("Impossibile modificare l'account specificato.")
             
         return self.user_repo.update(dipendente_id, {"livello_accesso": nuovo_livello})

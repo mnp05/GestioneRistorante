@@ -4,13 +4,9 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QInputDialog, QComboBox, QGroupBox)
 from PyQt5.QtCore import Qt
 from staff.api_client import StaffAPIClient
+from server.models.enums import LivelloAccesso, RuoloUtente
 
-LIVELLI_ACCESSO = [
-    "GESTIONE_PRENOTAZIONI",
-    "GESTIONE_INVENTARIO",
-    "GESTIONE_MENU",
-    "ACCESSO_COMPLETO",
-]
+LIVELLI_ACCESSO = [l.value for l in LivelloAccesso]
 
 class DipendentiWidget(QWidget):
     def __init__(self, user_data):
@@ -148,7 +144,7 @@ class DipendentiWidget(QWidget):
         nome_completo = f"{self.table.item(row, 1).text()} {self.table.item(row, 2).text()}" 
         ruolo = self.table.item(row, 3).text() 
 
-        if ruolo == "Gestore":
+        if ruolo == RuoloUtente.GESTORE.value:
             QMessageBox.warning(self, "Negato", "Non puoi modificare il livello di un altro Gestore.")
             return
 
