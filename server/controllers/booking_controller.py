@@ -94,7 +94,7 @@ class BookingController:
         ]
         
         if exclude_booking_id:
-            prenotazioni_conflitto = [p for p in prenotazioni_conflitto if str(p.get("id")) != str(exclude_booking_id)]
+            prenotazioni_conflitto = [p for p in prenotazioni_conflitto if str(p.get("id")) != exclude_booking_id]
             
         def _clean(val):
             s = str(val).strip()

@@ -89,14 +89,26 @@ class StaffMainWindow(QMainWindow):
             btn.clicked.connect(lambda _, i=idx: switch_tab(i))
             self.tab_buttons.append(btn)
 
-        add_custom_tab(TavoliWidget(), "Tavoli")
-        add_custom_tab(PrenotazioniWidget(), "Prenotazioni")
-        add_custom_tab(StaffMenuWidget(), "Menù")
-        add_custom_tab(InventarioWidget(), "Inventario")
-        add_custom_tab(StaffDashboardWidget(self.user_data), "Bacheca")
+        livello = self.user_data.get("livello_accesso", "")
+        ruolo = self.user_data.get("ruolo", "")
 
-        if self.user_data.get("ruolo") == "Gestore":
-            add_custom_tab(DipendentiWidget(self.user_data), "Dipendenti")
+        if ruolo == "Gestore" or livello == "ACCESSO_COMPLETO":
+            add_custom_tab(TavoliWidget(), "Tavoli")
+            add_custom_tab(PrenotazioniWidget(), "Prenotazioni")
+            add_custom_tab(StaffMenuWidget(), "Menù")
+            add_custom_tab(InventarioWidget(), "Inventario")
+            add_custom_tab(StaffDashboardWidget(self.user_data), "Bacheca")
+            if ruolo == "Gestore":
+                add_custom_tab(DipendentiWidget(self.user_data), "Dipendenti")
+        else:
+            if livello == "GESTIONE_PRENOTAZIONI":
+                add_custom_tab(TavoliWidget(), "Tavoli")
+                add_custom_tab(PrenotazioniWidget(), "Prenotazioni")
+            elif livello == "GESTIONE_MENU":
+                add_custom_tab(StaffMenuWidget(), "Menù")
+                add_custom_tab(InventarioWidget(), "Inventario")
+            
+            add_custom_tab(StaffDashboardWidget(self.user_data), "Bacheca")
             
         if self.tab_buttons:
             switch_tab(0)

@@ -120,6 +120,10 @@ class DipendentiWidget(QWidget):
             QMessageBox.warning(self, "Attenzione", "Compila tutti i campi.")
             return
 
+        if "@" not in email:
+            QMessageBox.warning(self, "Attenzione", "L'email deve contenere una '@'.")
+            return
+
         try:
             StaffAPIClient.crea_dipendente(
                 self.user_data.get("id"), nome, cognome, email, password, livello

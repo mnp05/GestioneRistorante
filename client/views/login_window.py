@@ -218,6 +218,10 @@ class LoginWindow(QWidget):
         if not all([nome, cognome, email, password]):
             QMessageBox.warning(self, "Attenzione", "Tutti i campi sono obbligatori.")
             return
+            
+        if "@" not in email:
+            QMessageBox.warning(self, "Attenzione", "Inserisci un indirizzo email valido (deve contenere la '@').")
+            return
 
         try:
             user_data = APIClient.register(nome, cognome, email, password)

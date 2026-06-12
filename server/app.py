@@ -54,6 +54,8 @@ def create_dipendente():
         return jsonify({"status": "success", "user": user}), 201
     except PermissionError as e:
         return jsonify({"status": "error", "message": str(e)}), 403
+    except ValueError as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 @app.route('/api/auth/dipendenti', methods=['GET'])
 def get_all_employees():

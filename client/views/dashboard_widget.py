@@ -150,6 +150,12 @@ class DashboardWidget(QWidget):
         old_pw, ok = QInputDialog.getText(self, "Modifica Password", "Inserisci la tua VECCHIA password:", QLineEdit.Password) 
         if not ok or not old_pw: return
         
+        try:
+            APIClient.login(self.user_data.get("email"), old_pw)
+        except Exception:
+            QMessageBox.warning(self, "Errore", "La vecchia password inserita non è corretta!")
+            return
+            
         new_pw, ok2 = QInputDialog.getText(self, "Modifica Password", "Inserisci la NUOVA password:", QLineEdit.Password) 
         if not ok2 or not new_pw: return
         

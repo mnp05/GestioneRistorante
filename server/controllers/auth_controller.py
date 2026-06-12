@@ -82,6 +82,13 @@ class AuthController:
         if not check_password_hash(str(cliente.get("password", "")), password):
             raise ValueError("Password errata. Impossibile cancellare l'account.")
             
+        # Elimina a cascata le prenotazioni del cliente
+        from server.models.booking import BookingRepository
+        booking_repo = BookingRepository()
+        for b in booking_repo.get_all():
+            if str(b.get("cliente_id")) == cliente_id:
+                booking_repo.delete(str(b.get("id")))
+                
         return self.user_repo.delete(cliente_id)
 
     def handle_modify_access_level(self, creatore_id: str, dipendente_id: str, nuovo_livello: str) -> bool:
